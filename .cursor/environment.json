@@ -1,0 +1,17 @@
+{
+  "name": "design-sites",
+  "install": "pnpm install --frozen-lockfile",
+  "terminals": [
+    {
+      "name": "dev",
+      "command": "pnpm dev",
+      "description": "Runs every app's Astro dev server at once: design-books (http://localhost:4321), design-styles (http://localhost:4322), design-reference (http://localhost:4323), design-philosophies (http://localhost:4324)."
+    }
+  ],
+  "ports": [
+    { "name": "design-books", "port": 4321 },
+    { "name": "design-styles", "port": 4322 },
+    { "name": "design-reference", "port": 4323 },
+    { "name": "design-philosophies", "port": 4324 }
+  ]
+}
