@@ -99,7 +99,9 @@ const letters = lettersInUse(sorted);
             data-letter={letter}
             id={`letter-${letter}`}
           >
-            <h2 class="term-title sticky top-0 z-10 -mx-1 bg-[var(--color-mist)]/90 px-1 py-2 text-3xl backdrop-blur-sm">
+            <h2
+              class="term-title sticky top-0 z-10 -mx-1 bg-[var(--color-mist)]/90 px-1 py-2 text-3xl backdrop-blur-sm pointer-events-none"
+            >
               {letter}
             </h2>
             <ul class="grid gap-0 divide-y divide-[var(--color-line)] border-y border-[var(--color-line)]">

@@ -69,8 +69,13 @@
   text-underline-offset: 0.18em;
 }
 
-.link:hover {
+.link:hover,
+a.term-title:hover {
   text-decoration: underline;
+}
+
+a[href] {
+  cursor: pointer;
 }
 
 .term-title {
