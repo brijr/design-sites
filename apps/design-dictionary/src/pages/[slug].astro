@@ -1,0 +1,117 @@
+---
+import Layout from "../layouts/Layout.astro";
+import { SITE_NAME } from "../lib/site";
+import {
+  CATEGORY_LABELS,
+  getTerm,
+  relatedTerms,
+  sortTerms,
+  terms,
+} from "../lib/terms";
+
+export function getStaticPaths() {
+  return terms.map((entry) => ({
+    params: { slug: entry.slug },
+  }));
+}
+
+const { slug } = Astro.params;
+const entry = getTerm(slug!);
+
+if (!entry) {
+  return Astro.redirect("/404");
+}
+
+const related = relatedTerms(entry);
+const sorted = sortTerms();
+const index = sorted.findIndex((item) => item.slug === entry.slug);
+const previous = index > 0 ? sorted[index - 1] : undefined;
+const next = index < sorted.length - 1 ? sorted[index + 1] : undefined;
+---
+
+<Layout
+  title={`${entry.term} — ${SITE_NAME}`}
+  description={entry.definition}
+  path={`/${entry.slug}`}
+>
+  <article class="grid gap-10">
+    <div class="grid gap-4">
+      <p class="text-xs tracking-wide text-[var(--color-accent)] uppercase">
+        <a class="link" href="/">Dictionary</a>
+        <span aria-hidden="true"> / </span>
+        {CATEGORY_LABELS[entry.category]}
+      </p>
+      <h1 class="term-title text-4xl tracking-tight sm:text-5xl">{entry.term}</h1>
+      <p class="max-w-2xl text-lg text-[var(--color-ink-soft)] sm:text-xl">
+        {entry.definition}
+      </p>
+    </div>
+
+    <div
+      class="grid gap-4 rounded-2xl border border-[var(--color-line)] bg-[var(--color-paper)]/80 p-5 sm:p-6"
+    >
+      <h2
+        class="text-sm font-medium tracking-wide text-[var(--color-ink-soft)] uppercase"
+      >
+        In practice
+      </h2>
+      <p class="max-w-2xl leading-relaxed text-[var(--color-ink)]">{entry.detail}</p>
+    </div>
+
+    {
+      related.length > 0 && (
+        <section class="grid gap-3">
+          <h2 class="text-sm font-medium tracking-wide text-[var(--color-ink-soft)] uppercase">
+            Related terms
+          </h2>
+          <ul class="flex flex-wrap gap-2">
+            {related.map((item) => (
+              <li>
+                <a
+                  class="inline-flex rounded-full border border-[var(--color-line)] bg-white px-3 py-1.5 text-sm text-[var(--color-ink)] transition hover:border-[var(--color-accent)] hover:text-[var(--color-accent)]"
+                  href={`/${item.slug}`}
+                >
+                  {item.term}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )
+    }
+
+    <nav
+      class="grid gap-4 border-t border-[var(--color-line)] pt-6 sm:grid-cols-2"
+      aria-label="Adjacent terms"
+    >
+      {
+        previous ? (
+          <a class="group grid gap-1" href={`/${previous.slug}`}>
+            <span class="text-xs tracking-wide text-[var(--color-ink-soft)] uppercase">
+              Previous
+            </span>
+            <span class="term-title text-xl group-hover:text-[var(--color-accent)]">
+              {previous.term}
+            </span>
+          </a>
+        ) : (
+          <span />
+        )
+      }
+      {
+        next ? (
+          <a class="group grid gap-1 sm:text-right" href={`/${next.slug}`}>
+            <span class="text-xs tracking-wide text-[var(--color-ink-soft)] uppercase">
+              Next
+            </span>
+            <span class="term-title text-xl group-hover:text-[var(--color-accent)]">
+              {next.term}
+            </span>
+          </a>
+        ) : (
+          <span />
+        )
+      }
+    </nav>
+  </article>
+</Layout>

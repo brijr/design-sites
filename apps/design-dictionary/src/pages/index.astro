@@ -1,0 +1,247 @@
+---
+import Layout from "../layouts/Layout.astro";
+import { SITE_DESCRIPTION, SITE_NAME } from "../lib/site";
+import {
+  CATEGORIES,
+  CATEGORY_LABELS,
+  lettersInUse,
+  sortTerms,
+  terms,
+  termsByLetter,
+} from "../lib/terms";
+
+const sorted = sortTerms(terms);
+const byLetter = termsByLetter(sorted);
+const letters = lettersInUse(sorted);
+---
+
+<Layout title={SITE_NAME} description={SITE_DESCRIPTION} path="/">
+  <section class="dictionary grid gap-8" data-dictionary>
+    <div
+      class="grid gap-4 rounded-2xl border border-[var(--color-line)] bg-[var(--color-paper)]/80 p-5 shadow-[0_1px_0_rgba(16,32,41,0.04)] sm:p-6"
+    >
+      <label class="grid gap-2">
+        <span
+          class="text-xs font-medium tracking-wide text-[var(--color-ink-soft)] uppercase"
+        >
+          Search the lexicon
+        </span>
+        <input
+          class="w-full rounded-xl border border-[var(--color-line)] bg-white px-4 py-3 text-base text-[var(--color-ink)] outline-none transition placeholder:text-[var(--color-ink-soft)]/70 focus:border-[var(--color-accent)] focus:ring-2 focus:ring-[var(--color-accent)]/20"
+          type="search"
+          name="q"
+          placeholder="Try hierarchy, kerning, affordance…"
+          autocomplete="off"
+          data-search
+        />
+      </label>
+
+      <fieldset class="flex flex-wrap gap-2">
+        <legend class="sr-only">Filter by category</legend>
+        <label class="chip">
+          <input
+            class="sr-only"
+            type="radio"
+            name="category"
+            value="all"
+            checked
+            data-category
+          />
+          <span>All</span>
+        </label>
+        {
+          CATEGORIES.map((category) => (
+            <label class="chip">
+              <input
+                class="sr-only"
+                type="radio"
+                name="category"
+                value={category}
+                data-category
+              />
+              <span>{CATEGORY_LABELS[category]}</span>
+            </label>
+          ))
+        }
+      </fieldset>
+
+      <nav
+        aria-label="Jump to letter"
+        class="flex flex-wrap gap-x-3 gap-y-1 text-sm text-[var(--color-ink-soft)]"
+      >
+        {
+          letters.map((letter) => (
+            <a
+              class="link tabular-nums"
+              href={`#letter-${letter}`}
+              data-letter-link={letter}
+            >
+              {letter}
+            </a>
+          ))
+        }
+      </nav>
+
+      <p
+        class="text-sm text-[var(--color-ink-soft)]"
+        data-count
+        aria-live="polite"
+      >
+        {sorted.length} terms
+      </p>
+    </div>
+
+    <div class="grid gap-10" data-results>
+      {
+        [...byLetter.entries()].map(([letter, entries]) => (
+          <section
+            class="letter-group grid gap-4"
+            data-letter={letter}
+            id={`letter-${letter}`}
+          >
+            <h2 class="term-title sticky top-0 z-10 -mx-1 bg-[var(--color-mist)]/90 px-1 py-2 text-3xl backdrop-blur-sm">
+              {letter}
+            </h2>
+            <ul class="grid gap-0 divide-y divide-[var(--color-line)] border-y border-[var(--color-line)]">
+              {entries.map((entry) => (
+                <li
+                  class="term-row"
+                  data-term
+                  data-category={entry.category}
+                  data-name={entry.term.toLowerCase()}
+                  data-definition={entry.definition.toLowerCase()}
+                >
+                  <a
+                    class="group grid gap-1 py-4 transition hover:bg-[var(--color-paper)]/70 sm:grid-cols-[minmax(9rem,14rem)_1fr] sm:gap-6"
+                    href={`/${entry.slug}`}
+                  >
+                    <span class="term-title text-xl text-[var(--color-ink)] group-hover:text-[var(--color-accent)] sm:text-2xl">
+                      {entry.term}
+                    </span>
+                    <span class="grid gap-1">
+                      <span class="text-[var(--color-ink-soft)]">
+                        {entry.definition}
+                      </span>
+                      <span class="text-xs tracking-wide text-[var(--color-accent)] uppercase">
+                        {CATEGORY_LABELS[entry.category]}
+                      </span>
+                    </span>
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </section>
+        ))
+      }
+    </div>
+
+    <p class="hidden text-[var(--color-ink-soft)]" data-empty>
+      No terms match that search.
+    </p>
+  </section>
+</Layout>
+
+<style>
+  .chip {
+    cursor: pointer;
+  }
+
+  .chip span {
+    display: inline-flex;
+    border-radius: 999px;
+    border: 1px solid var(--color-line);
+    background: white;
+    padding: 0.4rem 0.8rem;
+    font-size: 0.875rem;
+    color: var(--color-ink-soft);
+    transition:
+      background-color 160ms ease,
+      border-color 160ms ease,
+      color 160ms ease;
+  }
+
+  .chip:has(:checked) span {
+    border-color: var(--color-accent);
+    background: var(--color-accent);
+    color: white;
+  }
+
+  .chip:has(:focus-visible) span {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+  }
+
+  .term-row.is-hidden {
+    display: none;
+  }
+
+  .letter-group.is-empty {
+    display: none;
+  }
+</style>
+
+<script>
+  const root = document.querySelector("[data-dictionary]");
+  if (root instanceof HTMLElement) {
+    const search = root.querySelector("[data-search]");
+    const count = root.querySelector("[data-count]");
+    const empty = root.querySelector("[data-empty]");
+    const rows = [...root.querySelectorAll("[data-term]")];
+    const groups = [...root.querySelectorAll("[data-letter]")];
+    const letterLinks = [...root.querySelectorAll("[data-letter-link]")];
+
+    const selectedCategory = () => {
+      const checked = root.querySelector<HTMLInputElement>(
+        "[data-category]:checked",
+      );
+      return checked?.value ?? "all";
+    };
+
+    const apply = () => {
+      const query =
+        search instanceof HTMLInputElement
+          ? search.value.trim().toLowerCase()
+          : "";
+      const category = selectedCategory();
+      let visible = 0;
+
+      for (const row of rows) {
+        if (!(row instanceof HTMLElement)) continue;
+        const name = row.dataset.name ?? "";
+        const definition = row.dataset.definition ?? "";
+        const rowCategory = row.dataset.category ?? "";
+        const matchesQuery =
+          query.length === 0 ||
+          name.includes(query) ||
+          definition.includes(query);
+        const matchesCategory = category === "all" || rowCategory === category;
+        const show = matchesQuery && matchesCategory;
+        row.classList.toggle("is-hidden", !show);
+        if (show) visible += 1;
+      }
+
+      for (const group of groups) {
+        if (!(group instanceof HTMLElement)) continue;
+        const hasVisible = group.querySelector("[data-term]:not(.is-hidden)");
+        group.classList.toggle("is-empty", !hasVisible);
+        const letter = group.dataset.letter;
+        const link = letterLinks.find(
+          (item) =>
+            item instanceof HTMLElement && item.dataset.letterLink === letter,
+        );
+        if (link instanceof HTMLElement) {
+          link.style.opacity = hasVisible ? "1" : "0.35";
+          link.style.pointerEvents = hasVisible ? "auto" : "none";
+        }
+      }
+
+      if (count) {
+        count.textContent = `${visible} term${visible === 1 ? "" : "s"}`;
+      }
+      empty?.classList.toggle("hidden", visible > 0);
+    };
+
+    root.addEventListener("input", apply);
+    root.addEventListener("change", apply);
+  }
+</script>

@@ -13,6 +13,7 @@ Each site owns a different verb:
 | Site | Verb | Core question | Primary value |
 | --- | --- | --- | --- |
 | **design-styles** | See | "What does this look like?" | Discovery and visual literacy |
+| **design-dictionary** | Name | "What does this word mean?" | Shared vocabulary |
 | **design-reference** | Use | "What value, rule, or format do I need?" | Fast, repeat utility |
 | **design-philosophies** | Think | "What does this approach believe?" | Context and critical judgment |
 | **design-books** | Read | "Where can I go deeper?" | Canonical sources |
@@ -53,6 +54,27 @@ Each page is a **visual specimen**, not a conventional article:
 
 Interface feels exploratory: visual index, timeline, filters, side-by-side
 comparison.
+
+## design-dictionary
+
+**The essential vocabulary of design — one hundred terms spanning interface,
+typography, color, layout, perception, and foundational principles.**
+
+A lexicon you open mid-conversation or mid-critique: short definitions up
+front, a practical note underneath, and links to related terms. Not a
+textbook and not a standards desk — the shared language that lets the other
+sites talk to each other.
+
+Each entry:
+
+1. Term name
+2. One-sentence definition
+3. A short “in practice” note
+4. Related terms
+5. Category (principles, typography, interface, layout, color, perception)
+
+Homepage is search-first with category filters and an A–Z index. Detail pages
+are quiet and typographic — the word is the hero.
 
 ## design-reference
 

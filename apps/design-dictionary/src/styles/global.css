@@ -1,0 +1,94 @@
+@import "tailwindcss";
+
+@font-face {
+  font-family: "Manrope Fallback";
+  src: local("Arial");
+  size-adjust: 104.14%;
+  ascent-override: 102.37%;
+  descent-override: 28.81%;
+  line-gap-override: 0%;
+}
+
+@font-face {
+  font-family: "Literata Fallback";
+  src: local("Times New Roman");
+  size-adjust: 106.5%;
+  ascent-override: 92.5%;
+  descent-override: 24.8%;
+  line-gap-override: 0%;
+}
+
+@theme {
+  --font-sans:
+    "Manrope Variable", "Manrope Fallback", ui-sans-serif, system-ui,
+    sans-serif;
+  --font-serif:
+    "Literata Variable", "Literata Fallback", ui-serif, Georgia, serif;
+
+  --color-ink: #102029;
+  --color-ink-soft: #3d4f5c;
+  --color-mist: #e7eef2;
+  --color-paper: #f4f7f9;
+  --color-line: #c5d0d8;
+  --color-accent: #0f6e5c;
+  --color-accent-soft: #d5ebe5;
+}
+
+@layer base {
+  html {
+    overflow-x: clip;
+    font-family: var(--font-sans);
+    background:
+      radial-gradient(1200px 600px at 10% -10%, #d9e8e4 0%, transparent 55%),
+      radial-gradient(900px 500px at 100% 0%, #d7e2ea 0%, transparent 50%),
+      var(--color-mist);
+    color: var(--color-ink);
+  }
+
+  body {
+    overflow-x: clip;
+    min-height: 100dvh;
+  }
+
+  h1,
+  h2,
+  h3 {
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  ::selection {
+    background: var(--color-accent-soft);
+  }
+}
+
+.link {
+  text-underline-offset: 0.18em;
+}
+
+.link:hover {
+  text-decoration: underline;
+}
+
+.term-title {
+  font-family: var(--font-serif);
+  font-optical-sizing: auto;
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(0.4rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.rise {
+  animation: rise 420ms ease-out both;
+}

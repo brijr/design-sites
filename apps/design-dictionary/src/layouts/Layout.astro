@@ -1,0 +1,96 @@
+---
+import "@fontsource-variable/literata";
+import "@fontsource-variable/manrope";
+import "../styles/global.css";
+
+import literataLatin from "@fontsource-variable/literata/files/literata-latin-wght-normal.woff2?url";
+import manropeLatin from "@fontsource-variable/manrope/files/manrope-latin-wght-normal.woff2?url";
+
+import { SITE_DESCRIPTION, SITE_NAME } from "../lib/site";
+
+interface Props {
+  title: string;
+  description?: string;
+  path: string;
+}
+
+const { title, description = SITE_DESCRIPTION, path } = Astro.props;
+const canonical = new URL(path, Astro.site).href;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" href="data:," />
+    <link rel="canonical" href={canonical} />
+    <link
+      rel="preload"
+      href={literataLatin}
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+    <link
+      rel="preload"
+      href={manropeLatin}
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta name="author" content="Bridger Tower" />
+    <meta name="robots" content="index, follow" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={SITE_NAME} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+  </head>
+  <body>
+    <div class="mx-auto grid min-h-dvh max-w-5xl gap-10 px-6 py-8 sm:px-10 sm:py-12">
+      <header class="rise flex flex-wrap items-end justify-between gap-4">
+        <div class="grid gap-1">
+          <a
+            href="/"
+            class="term-title text-2xl tracking-tight text-[var(--color-ink)] sm:text-3xl"
+          >
+            {SITE_NAME}
+          </a>
+          <p class="max-w-xl text-sm text-[var(--color-ink-soft)] sm:text-base">
+            One hundred words every designer should know.
+          </p>
+        </div>
+        <p class="text-xs tracking-wide text-[var(--color-ink-soft)] uppercase">
+          A Design Source project
+        </p>
+      </header>
+
+      <main class="rise grid min-w-0 gap-10" style="animation-delay: 60ms">
+        <slot />
+      </main>
+
+      <footer
+        class="rise mt-auto grid gap-2 border-t border-[var(--color-line)] pt-6 text-sm text-[var(--color-ink-soft)]"
+        style="animation-delay: 120ms"
+      >
+        <p>
+          © design-dictionary.com / made by
+          <a class="link" href="https://bridger.to">bridger</a>
+          @
+          <a class="link" href="https://wipdes.com">wip</a>
+        </p>
+        <p class="flex flex-wrap gap-x-3 gap-y-1 text-xs">
+          <a class="link" href="https://design-books.com">design-books</a>
+          <a class="link" href="https://design-styles.com">design-styles</a>
+          <a class="link" href="https://design-reference.com">design-reference</a>
+          <a class="link" href="https://design-philosophies.com"
+            >design-philosophies</a
+          >
+        </p>
+      </footer>
+    </div>
+  </body>
+</html>
