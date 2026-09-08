@@ -1,0 +1,14 @@
+---
+import Layout from "../layouts/Layout.astro";
+import { SITE_NAME } from "../lib/site";
+---
+
+<Layout title={`Not found — ${SITE_NAME}`} description="Term not found." path="/404">
+  <section class="grid gap-4">
+    <h1 class="font-medium">Not found</h1>
+    <p class="text-zinc-400">That term is not in the dictionary.</p>
+    <p>
+      <a class="link" href="/">Back to all terms</a>
+    </p>
+  </section>
+</Layout>
