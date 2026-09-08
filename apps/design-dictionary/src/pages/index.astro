@@ -16,29 +16,30 @@ const letters = lettersInUse(sorted);
 ---
 
 <Layout title={SITE_NAME} description={SITE_DESCRIPTION} path="/">
-  <section class="dictionary grid gap-8" data-dictionary>
-    <div
-      class="grid gap-4 rounded-2xl border border-[var(--color-line)] bg-[var(--color-paper)]/80 p-5 shadow-[0_1px_0_rgba(16,32,41,0.04)] sm:p-6"
-    >
+  <section class="catalog grid min-w-0 gap-12" data-dictionary>
+    <div>
+      <h1 class="font-medium">One hundred words every designer should know.</h1>
+      <p class="text-zinc-400">
+        Interface, typography, and foundational principles — in plain language.
+      </p>
+    </div>
+
+    <div class="grid gap-4">
       <label class="grid gap-2">
-        <span
-          class="text-xs font-medium tracking-wide text-[var(--color-ink-soft)] uppercase"
-        >
-          Search the lexicon
-        </span>
+        <span class="sr-only">Search terms</span>
         <input
-          class="w-full rounded-xl border border-[var(--color-line)] bg-white px-4 py-3 text-base text-[var(--color-ink)] outline-none transition placeholder:text-[var(--color-ink-soft)]/70 focus:border-[var(--color-accent)] focus:ring-2 focus:ring-[var(--color-accent)]/20"
+          class="w-full max-w-md border-b border-zinc-200 bg-transparent py-2 text-base outline-none placeholder:text-zinc-400 focus:border-zinc-950"
           type="search"
           name="q"
-          placeholder="Try hierarchy, kerning, affordance…"
+          placeholder="Search — hierarchy, kerning, affordance…"
           autocomplete="off"
           data-search
         />
       </label>
 
-      <fieldset class="flex flex-wrap gap-2">
+      <fieldset class="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-zinc-400">
         <legend class="sr-only">Filter by category</legend>
-        <label class="chip">
+        <label class="cursor-pointer">
           <input
             class="sr-only"
             type="radio"
@@ -47,11 +48,11 @@ const letters = lettersInUse(sorted);
             checked
             data-category
           />
-          <span>All</span>
+          All
         </label>
         {
           CATEGORIES.map((category) => (
-            <label class="chip">
+            <label class="cursor-pointer">
               <input
                 class="sr-only"
                 type="radio"
@@ -59,7 +60,7 @@ const letters = lettersInUse(sorted);
                 value={category}
                 data-category
               />
-              <span>{CATEGORY_LABELS[category]}</span>
+              {CATEGORY_LABELS[category]}
             </label>
           ))
         }
@@ -67,26 +68,18 @@ const letters = lettersInUse(sorted);
 
       <nav
         aria-label="Jump to letter"
-        class="flex flex-wrap gap-x-3 gap-y-1 text-sm text-[var(--color-ink-soft)]"
+        class="flex flex-wrap gap-x-3 gap-y-1 text-sm text-zinc-400"
       >
         {
           letters.map((letter) => (
-            <a
-              class="link tabular-nums"
-              href={`#letter-${letter}`}
-              data-letter-link={letter}
-            >
+            <a class="link" href={`#letter-${letter}`} data-letter-link={letter}>
               {letter}
             </a>
           ))
         }
       </nav>
 
-      <p
-        class="text-sm text-[var(--color-ink-soft)]"
-        data-count
-        aria-live="polite"
-      >
+      <p class="text-sm text-zinc-400" data-count aria-live="polite">
         {sorted.length} terms
       </p>
     </div>
@@ -99,12 +92,10 @@ const letters = lettersInUse(sorted);
             data-letter={letter}
             id={`letter-${letter}`}
           >
-            <h2
-              class="term-title sticky top-0 z-10 -mx-1 bg-[var(--color-mist)]/90 px-1 py-2 text-3xl backdrop-blur-sm pointer-events-none"
-            >
+            <h2 class="sticky top-0 z-10 bg-zinc-50/90 py-2 font-medium backdrop-blur-sm pointer-events-none">
               {letter}
             </h2>
-            <ul class="grid gap-0 divide-y divide-[var(--color-line)] border-y border-[var(--color-line)]">
+            <ul class="grid gap-0 divide-y divide-zinc-200 border-y border-zinc-200">
               {entries.map((entry) => (
                 <li
                   class="term-row"
@@ -114,17 +105,15 @@ const letters = lettersInUse(sorted);
                   data-definition={entry.definition.toLowerCase()}
                 >
                   <a
-                    class="group grid gap-1 py-4 transition hover:bg-[var(--color-paper)]/70 sm:grid-cols-[minmax(9rem,14rem)_1fr] sm:gap-6"
+                    class="group grid gap-1 py-4 sm:grid-cols-[minmax(9rem,14rem)_1fr] sm:gap-6"
                     href={`/${entry.slug}`}
                   >
-                    <span class="term-title text-xl text-[var(--color-ink)] group-hover:text-[var(--color-accent)] sm:text-2xl">
+                    <span class="font-medium group-hover:underline group-hover:underline-offset-2">
                       {entry.term}
                     </span>
                     <span class="grid gap-1">
-                      <span class="text-[var(--color-ink-soft)]">
-                        {entry.definition}
-                      </span>
-                      <span class="text-xs tracking-wide text-[var(--color-accent)] uppercase">
+                      <span class="text-zinc-400">{entry.definition}</span>
+                      <span class="text-sm text-zinc-400">
                         {CATEGORY_LABELS[entry.category]}
                       </span>
                     </span>
@@ -137,40 +126,18 @@ const letters = lettersInUse(sorted);
       }
     </div>
 
-    <p class="hidden text-[var(--color-ink-soft)]" data-empty>
-      No terms match that search.
-    </p>
+    <p class="hidden text-zinc-400" data-empty>No terms match that search.</p>
   </section>
 </Layout>
 
 <style>
-  .chip {
-    cursor: pointer;
+  .catalog label:has(:checked) {
+    color: var(--color-zinc-950);
   }
 
-  .chip span {
-    display: inline-flex;
-    border-radius: 999px;
-    border: 1px solid var(--color-line);
-    background: white;
-    padding: 0.4rem 0.8rem;
-    font-size: 0.875rem;
-    color: var(--color-ink-soft);
-    transition:
-      background-color 160ms ease,
-      border-color 160ms ease,
-      color 160ms ease;
-  }
-
-  .chip:has(:checked) span {
-    border-color: var(--color-accent);
-    background: var(--color-accent);
-    color: white;
-  }
-
-  .chip:has(:focus-visible) span {
-    outline: 2px solid var(--color-accent);
-    outline-offset: 2px;
+  .catalog label:has(:focus-visible) {
+    text-decoration: underline;
+    text-underline-offset: 2px;
   }
 
   .term-row.is-hidden {
@@ -232,7 +199,7 @@ const letters = lettersInUse(sorted);
             item instanceof HTMLElement && item.dataset.letterLink === letter,
         );
         if (link instanceof HTMLElement) {
-          link.style.opacity = hasVisible ? "1" : "0.35";
+          link.classList.toggle("opacity-35", !hasVisible);
           link.style.pointerEvents = hasVisible ? "auto" : "none";
         }
       }

@@ -13,7 +13,6 @@
   },
   "dependencies": {
     "@astrojs/cloudflare": "^14.2.1",
-    "@fontsource-variable/literata": "^5.3.0",
     "@fontsource-variable/manrope": "^5.3.0",
     "astro": "^7.2.1",
     "tailwindcss": "^4.3.2"
