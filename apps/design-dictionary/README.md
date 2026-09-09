@@ -3,7 +3,7 @@
 The essential vocabulary of design — 100 terms spanning interface design,
 typography, color, layout, perception, and foundational principles.
 
-Domain: [design-dictionary.com](https://design-dictionary.com) (planned)
+Domain: [design-dictionary.org](https://design-dictionary.org)
 
 ## Development
 

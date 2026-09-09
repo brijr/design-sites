@@ -8,7 +8,7 @@ import tailwindcss from "@tailwindcss/vite";
 // service, no Cloudflare Images binding. `file` format keeps the no-slash
 // URL as the one that resolves.
 export default defineConfig({
-  site: "https://design-dictionary.com",
+  site: "https://design-dictionary.org",
   output: "static",
   // Pinned so `pnpm dev` at the repo root can run every app at once.
   server: { port: 4325 },
