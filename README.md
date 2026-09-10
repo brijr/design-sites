@@ -7,7 +7,7 @@ of [Astro](https://astro.build) apps deployed to Cloudflare Workers.
 | --- | --- | --- |
 | [`apps/design-books`](apps/design-books) | [design-books.com](https://design-books.com) · [designbooks.org](https://designbooks.org) | A curated library of the best books on design and HCI |
 | [`apps/design-styles`](apps/design-styles) | [design-styles.com](https://design-styles.com) | A visual field guide to design movements and styles |
-| [`apps/design-dictionary`](apps/design-dictionary) | design-dictionary.com | The essential vocabulary of design — 100 core terms |
+| [`apps/design-dictionary`](apps/design-dictionary) | [design-dictionary.org](https://design-dictionary.org) | The essential vocabulary of design — 100 core terms |
 | `apps/design-reference` | design-reference.com | Coming soon |
 | `apps/design-philosophies` | design-philosophies.com | Coming soon |
 

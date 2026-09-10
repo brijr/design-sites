@@ -1,4 +1,4 @@
-# design-dictionary.com
+# design-dictionary.org
 
 Working document for the design dictionary site. Sibling of design-books.com
 and design-styles.com — same care, its own face.
@@ -48,4 +48,4 @@ Plain, precise, and short. No jargon for jargon’s sake — define the jargon.
 
 - Keep the list fixed at 100, or grow with an editorial bar?
 - Cross-link into design-books / design-styles / design-philosophies?
-- Domain: design-dictionary.com confirmed?
+- Domain: design-dictionary.org (design-dictionary.com is not available)
