@@ -6,7 +6,7 @@
     "dev": "node scripts/dev.mjs",
     "dev:stop": "pnpm --filter \"./apps/**\" --parallel exec astro dev stop",
     "build": "pnpm --recursive run build",
-    "check": "pnpm --recursive run check"
+    "check": "pnpm --recursive run check && pnpm --filter @design-sites/ui run gate"
   },
   "engines": {
     "node": ">=20.9.0"

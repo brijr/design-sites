@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Token contract demo</title>
+    <link rel="stylesheet" href="../src/tokens.css" />
+    <link rel="stylesheet" href="../src/prose.css" />
+    <style>
+      body {
+        margin: 0;
+        font: 14px/1.4 system-ui, sans-serif;
+        background: color-mix(in oklab, CanvasText 8%, Canvas);
+        color: CanvasText;
+      }
+
+      header {
+        padding: 1rem 1.25rem;
+        border-bottom: 1px solid color-mix(in oklab, CanvasText 18%, Canvas);
+        background: Canvas;
+      }
+
+      .stage {
+        display: grid;
+        gap: 1rem;
+        padding: 1rem;
+        grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+      }
+
+      [data-app] {
+        min-height: 18rem;
+        padding: 1.25rem;
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        background: var(--background);
+        color: var(--foreground);
+        font-family: var(--font-sans);
+      }
+
+      [data-app="books"] {
+        --background: #fafafa;
+        --foreground: #09090b;
+        --muted: #52525b;
+        --border: #e4e4e7;
+        --accent: #c2410c;
+        --radius: 0.75rem;
+        --font-sans: "Manrope", ui-sans-serif, system-ui, sans-serif;
+        --font-display: var(--font-sans);
+        --container: 80rem;
+      }
+
+      [data-app="dictionary"] {
+        --background: #f4f0e6;
+        --foreground: #1c1917;
+        --muted: #57534e;
+        --border: #d6d3d1;
+        --accent: #0f766e;
+        --radius: 0;
+        --font-sans: "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
+        --font-display: "IBM Plex Serif", ui-serif, Georgia, serif;
+        --container: 56rem;
+      }
+
+      [data-app="styles"] {
+        --background: #0a0a0a;
+        --foreground: #f5f5f5;
+        --muted: #a3a3a3;
+        --border: #262626;
+        --accent: #f59e0b;
+        --radius: 0.125rem;
+        --font-sans: "Space Grotesk", ui-sans-serif, system-ui, sans-serif;
+        --font-display: var(--font-sans);
+        --container: 90rem;
+      }
+
+      .brand {
+        font-size: 0.75rem;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        margin-bottom: 0.75rem;
+        opacity: 0.7;
+      }
+
+      .note {
+        padding: 0 1.25rem 1.5rem;
+        max-width: 70ch;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <strong>Token contract demo</strong>
+      <p>
+        One shared prose sheet. Three fake app profiles supply identity values
+        only.
+      </p>
+    </header>
+
+    <div class="stage">
+      <article data-app="books">
+        <p class="brand">design-books</p>
+        <div class="prose">
+          <h1>A curated collection of essential books on design.</h1>
+          <p>
+            Product, interaction, visual design, usability, systems, and craft.
+            <a href="#books">Read Don't Make Me Think</a>.
+          </p>
+        </div>
+      </article>
+      <article data-app="dictionary">
+        <p class="brand">design-dictionary</p>
+        <div class="prose">
+          <h1>One hundred words every designer should know.</h1>
+          <p>
+            Interface, typography, and foundational principles in plain language.
+            <a href="#dictionary">Open kerning</a>.
+          </p>
+        </div>
+      </article>
+      <article data-app="styles">
+        <p class="brand">design-styles</p>
+        <div class="prose">
+          <h1>A visual field guide to design.</h1>
+          <p>
+            Movements and visual languages, arranged in time.
+            <a href="#styles">See Bauhaus</a>.
+          </p>
+        </div>
+      </article>
+    </div>
+
+    <p class="note">
+      Shared CSS under <code>packages/ui/src</code> names tokens only. App
+      identity stays in each theme profile. Apps must stay visually distinct.
+      This fixture is not one shared skin.
+    </p>
+  </body>
+</html>

@@ -1,0 +1,41 @@
+.prose {
+  max-width: var(--prose-measure);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+  line-height: 1.65;
+}
+
+.prose :where(h1, h2, h3) {
+  font-family: var(--font-display);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  text-wrap: balance;
+  color: var(--foreground);
+}
+
+.prose :where(p) {
+  color: var(--muted);
+  text-wrap: pretty;
+}
+
+.prose :where(a) {
+  color: var(--accent);
+  text-underline-offset: 0.15em;
+}
+
+.prose :where(a:focus-visible) {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.prose :where(hr) {
+  border: 0;
+  border-top: 1px solid var(--border);
+  margin-block: 1.5em;
+}
+
+.prose :where(code) {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.9em;
+}

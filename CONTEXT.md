@@ -19,13 +19,14 @@ quality floors. The shared layer never carries an app's visible identity.
 
 The shared set of semantic CSS token *names* (and their light/dark plumbing)
 that every app implements. The contract fixes what tokens exist and mean;
-each app supplies its own values.
+each app supplies its own values. Allowlist and rules live under `docs/design/`.
 
 ## Theme Profile
 
 An app's single CSS file assigning values to the approved allowlist of tokens
 (fonts, palette, radius, accent, container width). The only place an app's
-identity lives; everything else styles against the token contract.
+identity lives; everything else styles against the token contract. See
+`docs/design/theme-profile.md`.
 
 ## Prose
 
