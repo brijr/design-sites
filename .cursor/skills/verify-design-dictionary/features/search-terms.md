@@ -19,14 +19,42 @@ Preconditions:
 - Design Dictionary is healthy at the launched URL (doctor ok).
 - Catalog includes `Kerning`.
 
-- **Open home.** Go to `/`. Run `control-design-dictionary browser goto /`. The heading `One hundred words every designer should know.` is visible and the count is greater than zero.
-- **Type a term query.** Fill the search box. Run `control-design-dictionary browser fill --role searchbox --name "Search terms" --value "kerning"`. The count becomes `1 term` and a Kerning row remains.
-- **Empty state.** Replace the query with nonsense. Run `control-design-dictionary browser fill --role searchbox --name "Search terms" --value "zzzx-no-such-term"`. The page shows `No terms match that search.`
-- **Proof.** Capture the matching state after the kerning query. Run `control-design-dictionary browser snapshot --aria --path "$VERIFY_DESIGN_DICTIONARY_RUN_DIR/evidence/search-terms/match.aria.yml"` and `control-design-dictionary browser screenshot --path "$VERIFY_DESIGN_DICTIONARY_RUN_DIR/evidence/search-terms/match.png"`.
+- **Match + proof (one session).** Search state is client-only on `/`; keep fill and evidence in one `browser steps` session:
+
+```bash
+RUN_DIR="${VERIFY_DESIGN_DICTIONARY_RUN_DIR:-/tmp/verify-design-dictionary}"
+mkdir -p "$RUN_DIR/evidence/search-terms"
+cat > /tmp/dictionary-search-match.json <<EOF
+[
+  {"action":"goto","positionals":["/"]},
+  {"action":"fill","flags":{"role":"searchbox","name":"Search terms","value":"kerning"}},
+  {"action":"wait-for-text","positionals":["1 term"]},
+  {"action":"snapshot","flags":{"path":"$RUN_DIR/evidence/search-terms/match.aria.yml"}},
+  {"action":"screenshot","flags":{"path":"$RUN_DIR/evidence/search-terms/match.png"}}
+]
+EOF
+control-design-dictionary browser steps --file /tmp/dictionary-search-match.json
+```
+
+The count becomes `1 term` and a Kerning row remains; artifacts show the filtered result.
+
+- **Empty state (one session).**
+
+```bash
+cat > /tmp/dictionary-search-empty.json <<EOF
+[
+  {"action":"goto","positionals":["/"]},
+  {"action":"fill","flags":{"role":"searchbox","name":"Search terms","value":"zzzx-no-such-term"}},
+  {"action":"wait-for-text","positionals":["No terms match that search."]},
+  {"action":"screenshot","flags":{"path":"$RUN_DIR/evidence/search-terms/empty.png"}}
+]
+EOF
+control-design-dictionary browser steps --file /tmp/dictionary-search-empty.json
+```
 
 ## Gotchas
 
-- Search is client-side on `input`; assert the visible count and rows, not a navigation event.
+- Search is client-side on `input` and does not change the URL. Separate `fill` then `screenshot` commands reopen `/` empty — always use `browser steps` for action + evidence.
 - Matching is case-insensitive substring across term name and definition.
 - Prefer `localhost` URLs; `127.0.0.1` may fail while the server is healthy.
-- Clearing search restores the full list — prove empty and match as separate steps.
+- Clearing search restores the full list — prove empty and match as separate sessions.

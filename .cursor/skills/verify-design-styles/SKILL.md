@@ -54,7 +54,7 @@ Stable handles:
 | Entry | link to `/bauhaus` (or other slug); detail H1 matches the style title |
 | Adjacent | nav `Adjacent styles` |
 
-Medium filtering is CSS-only; assert hidden vs visible articles after clicking a medium label.
+Medium filtering is CSS-only and does not change the URL; assert hidden vs visible articles after clicking a medium label. Keep action + screenshot/snapshot in one `control-design-styles browser steps --file …` session so evidence is not taken on a fresh default `/`.
 
 Set mobile width with `control-design-styles browser viewport --width 390 --height 844`.
 

@@ -25,19 +25,21 @@ Preconditions:
 - **Open + cancel (one session).** Dialog state is in-memory; use `browser steps` so open and close share one Chrome process:
 
 ```bash
-cat > /tmp/submit-open-close.json <<'JSON'
+RUN_DIR="${VERIFY_DESIGN_BOOKS_RUN_DIR:-/tmp/verify-design-books}"
+mkdir -p "$RUN_DIR/evidence/submit-book"
+cat > /tmp/submit-open-close.json <<EOF
 [
   {"action":"goto","positionals":["/"]},
   {"action":"click","flags":{"role":"button","name":"Submit a book"}},
   {"action":"wait-for-text","positionals":["Send a recommendation for the reading list."]},
   {"action":"click","flags":{"role":"button","name":"Close"}},
-  {"action":"screenshot","flags":{"path":"'"$VERIFY_DESIGN_BOOKS_RUN_DIR"'/evidence/submit-book/after-close.png"}}
+  {"action":"screenshot","flags":{"path":"$RUN_DIR/evidence/submit-book/after-close.png"}}
 ]
-JSON
+EOF
 control-design-books browser steps --file /tmp/submit-open-close.json
 ```
 
-- **Unconfigured webhook (API).** Run `control-design-books http POST /api/book-submissions --body '{"title":"Verification Probe","author":"Harness","notes":"local verify"}'`. Expect status `503` and message `Submission notifications are not configured yet.` when no webhook is set.
+- **Unconfigured webhook (API).** Run `control-design-books http POST /api/book-submissions --body '{"title":"Verification Probe","author":"Harness","notes":"local verify"}' --expect-status 503`. Expect status `503` and message `Submission notifications are not configured yet.` when no webhook is set.
 - **Proof.** Keep API JSON and dialog screenshots under `$VERIFY_DESIGN_BOOKS_RUN_DIR/evidence/submit-book/`. Do not claim Discord delivery unless a webhook was configured and the side effect was observed.
 
 ## Gotchas

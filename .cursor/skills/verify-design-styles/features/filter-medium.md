@@ -19,13 +19,28 @@ Preconditions:
 - Design Styles is healthy at the launched URL (doctor ok).
 - Home lists Bauhaus and other movements.
 
-- **Open home.** Run `control-design-styles browser goto /`. The heading `A visual field guide to design.` is visible.
-- **Filter graphic.** Run `control-design-styles browser click --role radio --name "Graphic"`. Non-graphic entries hide; Bauhaus remains if it includes graphic.
-- **Restore all.** Run `control-design-styles browser click --role radio --name "All"`. Entries return.
-- **Proof.** After Graphic is selected, run `control-design-styles browser screenshot --path "$VERIFY_DESIGN_STYLES_RUN_DIR/evidence/filter-medium/graphic.png"` and `control-design-styles browser snapshot --aria --path "$VERIFY_DESIGN_STYLES_RUN_DIR/evidence/filter-medium/graphic.aria.yml"`.
+- **Filter + proof (one session).** Medium selection is CSS-only on `/` and does not change the URL; keep click and evidence in one `browser steps` session:
+
+```bash
+RUN_DIR="${VERIFY_DESIGN_STYLES_RUN_DIR:-/tmp/verify-design-styles}"
+mkdir -p "$RUN_DIR/evidence/filter-medium"
+cat > /tmp/styles-filter-graphic.json <<EOF
+[
+  {"action":"goto","positionals":["/"]},
+  {"action":"click","flags":{"role":"radio","name":"Graphic"}},
+  {"action":"snapshot","flags":{"path":"$RUN_DIR/evidence/filter-medium/graphic.aria.yml"}},
+  {"action":"screenshot","flags":{"path":"$RUN_DIR/evidence/filter-medium/graphic.png"}}
+]
+EOF
+control-design-styles browser steps --file /tmp/styles-filter-graphic.json
+```
+
+Non-graphic entries hide; Bauhaus remains when it includes graphic.
+
+- **Restore all.** Run a separate session that clicks `All`, or navigate to `/` again (default is All).
 
 ## Gotchas
 
-- Filtering is CSS `:has` — no URL change. Assert visibility, not navigation.
+- Filtering is CSS `:has` — no URL change. Separate `click` then `screenshot` commands reopen `/` on All — always use `browser steps` for action + evidence.
 - Radios use visually hidden inputs; drive by accessible name.
 - An entry can belong to multiple mediums; `data-medium` is space-separated.

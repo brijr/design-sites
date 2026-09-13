@@ -54,7 +54,7 @@ Stable handles:
 | Term row | link whose name starts with the term, e.g. `Kerning` |
 | Letter jump | nav `Jump to letter` |
 
-Prefer those over CSS. Filter and search are client-side; assert visible count and rows, not navigation.
+Prefer those over CSS. Filter and search are client-side and do not change the URL; assert visible count and rows, not navigation. Keep action + screenshot/snapshot in one `control-design-dictionary browser steps --file …` session so evidence is not taken on a fresh default `/`.
 
 Set mobile width with `control-design-dictionary browser viewport --width 390 --height 844` (persists on the instance for later browser commands).
 

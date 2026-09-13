@@ -74,10 +74,10 @@ HTTP-only checks (no browser):
 
 ```bash
 control-design-books http GET /
-control-design-books http POST /api/book-submissions --body '{"title":"Example"}'
+control-design-books http POST /api/book-submissions --body '{"title":"Example"}' --expect-status 503
 ```
 
-Without `.dev.vars` / Discord webhook, a valid submission returns **503** with `Submission notifications are not configured yet.` — that is expected in bare local setups. Validation failures return **400**. Treat Discord delivery as an optional boundary; do not invent a webhook for proof unless the run explicitly configures one.
+Without `.dev.vars` / Discord webhook, a valid submission returns **503** with `Submission notifications are not configured yet.` — that is expected in bare local setups. Pass `--expect-status 503` so the harness treats that documented outcome as success. Validation failures return **400**. Treat Discord delivery as an optional boundary; do not invent a webhook for proof unless the run explicitly configures one.
 
 ## Evidence
 

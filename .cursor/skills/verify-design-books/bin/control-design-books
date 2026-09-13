@@ -28,7 +28,7 @@ Usage:
   control-design-books doctor
   control-design-books cleanup
   control-design-books browser <subcommand> ...
-  control-design-books http <method> <path> [--body <json>]
+  control-design-books http <method> <path> [--body <json>] [--expect-status <n>]
 
 Browser subcommands (each opens Chrome, restores pageUrl, runs one action):
   goto <path-or-url>
@@ -603,6 +603,13 @@ async function cmdHttp(argv) {
   const method = (positionals[0] || "GET").toUpperCase();
   const path = positionals[1] || "/";
   const url = new URL(path, instance.url).toString();
+  const expectStatus =
+    flags["expect-status"] !== undefined
+      ? Number(flags["expect-status"])
+      : null;
+  if (expectStatus !== null && !Number.isInteger(expectStatus)) {
+    throw new Error(`Invalid --expect-status: ${flags["expect-status"]}`);
+  }
 
   const init = { method, headers: {} };
   if (flags.body) {
@@ -616,14 +623,17 @@ async function cmdHttp(argv) {
   try {
     json = JSON.parse(text);
   } catch {
-    // keep raw
   }
+
+  const statusOk =
+    expectStatus !== null ? response.status === expectStatus : response.ok;
 
   process.stdout.write(
     JSON.stringify(
       {
-        ok: response.ok,
+        ok: statusOk,
         status: response.status,
+        expectStatus,
         url,
         body: json ?? text,
       },
@@ -631,7 +641,7 @@ async function cmdHttp(argv) {
       2,
     ) + "\n",
   );
-  if (!response.ok) process.exit(1);
+  if (!statusOk) process.exit(1);
 }
 
 async function main() {
