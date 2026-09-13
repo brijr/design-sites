@@ -1,0 +1,24 @@
+:root {
+  color-scheme: light dark;
+
+  --background: Canvas;
+  --foreground: CanvasText;
+  --muted: color-mix(in oklab, CanvasText 45%, Canvas);
+  --border: color-mix(in oklab, CanvasText 18%, Canvas);
+  --accent: LinkText;
+  --radius: 0;
+  --font-sans: system-ui, sans-serif;
+  --font-display: var(--font-sans);
+  --prose-measure: 65ch;
+  --container: 72rem;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: Canvas;
+    --foreground: CanvasText;
+    --muted: color-mix(in oklab, CanvasText 55%, Canvas);
+    --border: color-mix(in oklab, CanvasText 22%, Canvas);
+    --accent: LinkText;
+  }
+}

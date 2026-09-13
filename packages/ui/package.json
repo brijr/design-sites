@@ -1,0 +1,24 @@
+{
+  "name": "@design-sites/ui",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Names-only token contract, shared prose floor, and cn().",
+  "exports": {
+    "./tokens.css": "./src/tokens.css",
+    "./prose.css": "./src/prose.css",
+    "./cn": "./src/cn.ts"
+  },
+  "scripts": {
+    "check": "node scripts/check-theme-profile.mjs fixtures/good.theme-profile.css",
+    "gate": "node scripts/run-gate.mjs",
+    "test": "node scripts/check-theme-profile.test.mjs"
+  },
+  "dependencies": {
+    "clsx": "^2.1.1",
+    "tailwind-merge": "^2.5.5"
+  },
+  "engines": {
+    "node": ">=20.9.0"
+  }
+}
