@@ -1,27 +1,40 @@
 @import "tailwindcss";
 
-/*
-  Metric-matched fallback for Manrope, copied from apps/design-books — see its
-  global.css for the derivation from @capsizecss/metrics. If the typeface ever
-  changes, recompute rather than nudging these by hand.
-*/
 @font-face {
-  font-family: "Manrope Fallback";
+  font-family: "Source Sans 3 Fallback";
   src: local("Arial");
-  size-adjust: 104.14%;
-  ascent-override: 102.37%;
-  descent-override: 28.81%;
+  size-adjust: 100.06%;
+  ascent-override: 98.54%;
+  descent-override: 27.23%;
   line-gap-override: 0%;
 }
 
 @theme {
   --font-sans:
-    "Manrope Variable", "Manrope Fallback", ui-sans-serif, system-ui,
+    "Source Sans 3 Variable", "Source Sans 3 Fallback", ui-sans-serif, system-ui,
     sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+  --color-stub-bg: #e8eef5;
+  --color-stub-fg: #0f172a;
+  --color-stub-muted: #475569;
+  --color-stub-accent: #0369a1;
 }
 
 @layer base {
   html {
+    color-scheme: light;
     font-family: var(--font-sans);
+  }
+
+  body {
+    background: var(--color-stub-bg);
+    color: var(--color-stub-fg);
+  }
+
+  a {
+    color: var(--color-stub-accent);
+  }
+
+  a:hover {
+    color: var(--color-stub-fg);
   }
 }
