@@ -1,0 +1,674 @@
+#!/usr/bin/env node
+import { spawnSync } from "node:child_process";
+import {
+  existsSync,
+  mkdirSync,
+  readFileSync,
+  rmSync,
+  writeFileSync,
+} from "node:fs";
+import { dirname, join } from "node:path";
+
+import {
+  appRoot,
+  chromeProfileDir,
+  defaultChromePath,
+  defaultPort,
+  evidenceRoot,
+  helpersRoot,
+  instancePath,
+  runRoot,
+} from "../lib/paths.mjs";
+
+function usage(exitCode = 1) {
+  const text = `control-design-styles — design-styles verification harness
+
+Usage:
+  control-design-styles launch [--port <n>] [--force]
+  control-design-styles doctor
+  control-design-styles cleanup
+  control-design-styles browser <subcommand> ...
+  control-design-styles http <method> <path> [--body <json>]
+
+Browser subcommands (each opens Chrome, restores pageUrl, runs one action):
+  goto <path-or-url>
+  click --role <role> --name <name>
+  fill --role <role> --name <name> --value <text>
+  click-text <text>
+  press --key <key>
+  wait-for-text <text>
+  snapshot --aria [--path <file>]
+  screenshot [--path <file>] [--full-page]
+  eval <js-expression>
+  steps --file <json>   # multiple actions in one Chrome session (for dialogs)
+  viewport --width <n> [--height <n>]
+  url
+  title
+
+Environment:
+  VERIFY_DESIGN_STYLES_RUN_DIR   default /tmp/verify-design-styles
+  VERIFY_DESIGN_STYLES_PORT      default 4322
+  VERIFY_DESIGN_STYLES_CHROME    Chrome executable (prefer /opt/google/chrome/chrome)
+
+Evidence survives cleanup under $VERIFY_DESIGN_STYLES_RUN_DIR/evidence/.
+`;
+  process.stderr.write(text);
+  process.exit(exitCode);
+}
+
+function ensureHelpers() {
+  const marker = join(helpersRoot, "node_modules/playwright-core/package.json");
+  if (existsSync(marker)) return;
+
+  mkdirSync(helpersRoot, { recursive: true });
+  const result = spawnSync("npm", ["install", "--no-fund", "--no-audit"], {
+    cwd: helpersRoot,
+    stdio: "inherit",
+  });
+  if (result.status !== 0) {
+    throw new Error(
+      "Failed to install verify-design-styles helpers (playwright-core)",
+    );
+  }
+}
+
+function readInstance() {
+  if (!existsSync(instancePath)) return null;
+  return JSON.parse(readFileSync(instancePath, "utf8"));
+}
+
+function writeInstance(data) {
+  mkdirSync(runRoot, { recursive: true });
+  writeFileSync(instancePath, JSON.stringify(data, null, 2) + "\n");
+}
+
+function updateInstance(patch) {
+  const current = readInstance();
+  if (!current) throw new Error(`Missing instance at ${instancePath}`);
+  writeInstance({ ...current, ...patch });
+}
+
+function astroBin() {
+  return join(appRoot, "node_modules/.bin/astro");
+}
+
+function runAstro(args, opts = {}) {
+  return spawnSync(astroBin(), args, {
+    cwd: appRoot,
+    encoding: "utf8",
+    ...opts,
+  });
+}
+
+function urlFor(port) {
+  return `http://localhost:${port}`;
+}
+
+function sleep(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+async function waitForHomeHydrated(page) {
+  await page.getByRole("heading", { name: "A visual field guide to design." }).waitFor({ timeout: 15_000 });
+  await page.waitForLoadState("domcontentloaded");
+  await page.waitForFunction(() => {
+    return document.querySelector('.catalog [name="medium"]') instanceof HTMLInputElement;
+  }, { timeout: 15_000 });
+}
+
+async function waitForHttp(url, { timeoutMs = 60_000 } = {}) {
+  const start = Date.now();
+  let lastError = "";
+
+  while (Date.now() - start < timeoutMs) {
+    try {
+      const response = await fetch(url, { redirect: "manual" });
+      if (response.status >= 200 && response.status < 500) {
+        return response.status;
+      }
+      lastError = `HTTP ${response.status}`;
+    } catch (error) {
+      lastError = error instanceof Error ? error.message : String(error);
+    }
+    await sleep(400);
+  }
+
+  throw new Error(`Timed out waiting for ${url} (${lastError})`);
+}
+
+function parseArgs(argv) {
+  const positionals = [];
+  const flags = {};
+
+  for (let i = 0; i < argv.length; i += 1) {
+    const token = argv[i];
+    if (token.startsWith("--")) {
+      const key = token.slice(2);
+      const next = argv[i + 1];
+      if (!next || next.startsWith("--")) {
+        flags[key] = true;
+      } else {
+        flags[key] = next;
+        i += 1;
+      }
+    } else {
+      positionals.push(token);
+    }
+  }
+
+  return { positionals, flags };
+}
+
+function isPidAlive(pid) {
+  if (!pid) return false;
+  try {
+    process.kill(pid, 0);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+function resolveChromePath() {
+  const candidates = [
+    process.env.VERIFY_DESIGN_STYLES_CHROME,
+    process.env.CHROME_PATH,
+    "/opt/google/chrome/chrome",
+    "/usr/bin/google-chrome-stable",
+    defaultChromePath(),
+  ].filter(Boolean);
+
+  for (const candidate of candidates) {
+    if (existsSync(candidate)) return candidate;
+  }
+  return candidates[0];
+}
+
+async function cmdLaunch(argv) {
+  const { flags } = parseArgs(argv);
+  const port = Number(flags.port || defaultPort());
+  if (!Number.isInteger(port) || port < 1) {
+    throw new Error(`Invalid --port: ${flags.port}`);
+  }
+
+  const existing = readInstance();
+  if (existing && !flags.force) {
+    throw new Error(
+      `Instance already recorded at ${instancePath}. Run cleanup first or pass --force.`,
+    );
+  }
+
+  if (flags.force) {
+    await cmdCleanup();
+  }
+
+  if (!existsSync(astroBin())) {
+    throw new Error(
+      `Missing Astro binary at ${astroBin()}. Run pnpm install from the repo root first.`,
+    );
+  }
+
+  mkdirSync(runRoot, { recursive: true });
+  mkdirSync(evidenceRoot, { recursive: true });
+
+  const launch = runAstro(
+    ["dev", "--background", "--port", String(port), "--host", "localhost"],
+    { stdio: ["ignore", "pipe", "pipe"] },
+  );
+
+  if (launch.status !== 0) {
+    process.stderr.write(launch.stdout || "");
+    process.stderr.write(launch.stderr || "");
+    throw new Error(
+      `astro dev --background failed with status ${launch.status}`,
+    );
+  }
+
+  const combined = `${launch.stdout || ""}${launch.stderr || ""}`;
+  const pidMatch = combined.match(/pid\s+(\d+)/i);
+  const pid = pidMatch ? Number(pidMatch[1]) : null;
+  const url = urlFor(port);
+
+  await waitForHttp(url);
+
+  const status = runAstro(["dev", "status"], {
+    stdio: ["ignore", "pipe", "pipe"],
+  });
+  const statusText = `${status.stdout || ""}${status.stderr || ""}`.trim();
+
+  writeInstance({
+    app: "design-styles",
+    url,
+    pageUrl: url,
+    port,
+    pid,
+    appRoot,
+    launchedAt: new Date().toISOString(),
+    statusText,
+    chromePath: resolveChromePath(),
+  });
+
+  process.stdout.write(
+    JSON.stringify(
+      {
+        ok: true,
+        url,
+        port,
+        pid,
+        instancePath,
+        evidenceRoot,
+      },
+      null,
+      2,
+    ) + "\n",
+  );
+}
+
+async function cmdDoctor() {
+  const instance = readInstance();
+  const checks = [];
+
+  const push = (name, ok, detail) => {
+    checks.push({ name, ok, detail });
+  };
+
+  if (!instance) {
+    push("instance-file", false, `Missing ${instancePath}`);
+  } else {
+    push("instance-file", true, instancePath);
+    push("url", Boolean(instance.url), instance.url || "missing");
+    push("port", Number.isInteger(instance.port), String(instance.port));
+    push("app-root", instance.appRoot === appRoot, instance.appRoot);
+    push(
+      "owned-pid",
+      !instance.pid || isPidAlive(instance.pid),
+      instance.pid ? `pid ${instance.pid}` : "unknown pid",
+    );
+  }
+
+  const status = runAstro(["dev", "status"], {
+    stdio: ["ignore", "pipe", "pipe"],
+  });
+  const statusText = `${status.stdout || ""}${status.stderr || ""}`.trim();
+  const statusOk =
+    status.status === 0 &&
+    /Dev server running/i.test(statusText) &&
+    (!instance || statusText.includes(String(instance.port)));
+  push("astro-status", statusOk, statusText || `exit ${status.status}`);
+
+  if (instance?.url) {
+    try {
+      const response = await fetch(instance.url);
+      const body = await response.text();
+      push("http", response.status === 200, `HTTP ${response.status}`);
+      push(
+        "brand",
+        body.includes("Design Styles") &&
+          body.includes("A visual field guide to design."),
+        "home markup contains brand + hero",
+      );
+      push(
+        "medium-filter",
+        body.includes("Filter by medium") || body.includes('name="medium"'),
+        "medium filter present",
+      );
+      push(
+        "style-entries",
+        body.includes("Bauhaus") || body.includes('id="bauhaus"'),
+        "style entries present",
+      );
+    } catch (error) {
+      push(
+        "http",
+        false,
+        error instanceof Error ? error.message : String(error),
+      );
+    }
+  }
+
+  const chromePath = instance?.chromePath || resolveChromePath();
+  push("chrome", existsSync(chromePath), chromePath);
+
+  const ok = checks.every((check) => check.ok);
+  process.stdout.write(JSON.stringify({ ok, checks, instance }, null, 2) + "\n");
+  if (!ok) process.exit(1);
+}
+
+async function cmdCleanup() {
+  const instance = readInstance();
+
+  const stop = runAstro(["dev", "stop"], { stdio: ["ignore", "pipe", "pipe"] });
+  const stopText = `${stop.stdout || ""}${stop.stderr || ""}`.trim();
+
+  if (instance?.pid && isPidAlive(instance.pid)) {
+    try {
+      process.kill(instance.pid, "SIGTERM");
+    } catch {
+    }
+  }
+
+  if (existsSync(chromeProfileDir)) {
+    rmSync(chromeProfileDir, { recursive: true, force: true });
+  }
+
+  if (existsSync(instancePath)) {
+    rmSync(instancePath, { force: true });
+  }
+
+  process.stdout.write(
+    JSON.stringify(
+      {
+        ok: true,
+        stopped: stopText || null,
+        evidenceRoot: existsSync(evidenceRoot) ? evidenceRoot : null,
+        note: "Evidence directory is retained on purpose.",
+      },
+      null,
+      2,
+    ) + "\n",
+  );
+}
+
+async function loadPlaywright() {
+  ensureHelpers();
+  const mod = await import(
+    join(helpersRoot, "node_modules/playwright-core/index.js")
+  );
+  return mod.default ?? mod;
+}
+
+async function withPage(fn, { restore = true } = {}) {
+  const instance = readInstance();
+  if (!instance) throw new Error("No verification instance. Run launch first.");
+
+  const { chromium } = await loadPlaywright();
+  const browser = await chromium.launch({
+    executablePath: instance.chromePath || resolveChromePath(),
+    headless: true,
+    args: ["--no-sandbox", "--disable-dev-shm-usage"],
+  });
+  const width = Number(instance.viewportWidth) || 1280;
+  const height = Number(instance.viewportHeight) || 800;
+  const page = await browser.newPage({ viewport: { width, height } });
+
+  try {
+    if (restore && instance.pageUrl) {
+      await page.goto(instance.pageUrl, {
+        waitUntil: "domcontentloaded",
+        timeout: 30_000,
+      });
+      const path = new URL(instance.pageUrl).pathname;
+      if (path === "/") {
+        await waitForHomeHydrated(page);
+      }
+    }
+
+    const result = await fn(page, instance);
+    updateInstance({ pageUrl: page.url() });
+    return result;
+  } finally {
+    await browser.close();
+  }
+}
+
+function locatorFromFlags(page, flags) {
+  if (flags.role && flags.name !== undefined) {
+    return page.getByRole(flags.role, {
+      name: String(flags.name),
+      exact: flags.exact === true,
+    });
+  }
+  if (flags.label) {
+    return page.getByLabel(String(flags.label), {
+      exact: flags.exact === true,
+    });
+  }
+  if (flags.text) {
+    return page.getByText(String(flags.text), {
+      exact: flags.exact === true,
+    });
+  }
+  throw new Error("Need --role/--name, --label, or --text");
+}
+
+async function runBrowserAction(page, instance, subcommand, positionals, flags) {
+  switch (subcommand) {
+    case "goto": {
+      const target = positionals[0];
+      if (!target) throw new Error("goto requires a path or URL");
+      const url = target.startsWith("http")
+        ? target
+        : new URL(target, instance.url).toString();
+      const response = await page.goto(url, {
+        waitUntil: "domcontentloaded",
+        timeout: 30_000,
+      });
+      if (new URL(url).pathname === "/") {
+        await waitForHomeHydrated(page);
+      }
+      return {
+        ok: true,
+        url: page.url(),
+        status: response?.status() ?? null,
+        title: await page.title(),
+      };
+    }
+    case "click": {
+      const locator = locatorFromFlags(page, flags);
+      await locator.first().click();
+      await sleep(200);
+      return { ok: true, url: page.url() };
+    }
+    case "click-text": {
+      const text = positionals[0] || flags.text;
+      if (!text) throw new Error("click-text requires text");
+      await page
+        .getByText(String(text), { exact: flags.exact === true })
+        .first()
+        .click();
+      await sleep(200);
+      return { ok: true, url: page.url() };
+    }
+    case "fill": {
+      const value = flags.value;
+      if (value === undefined) throw new Error("fill requires --value");
+      const locator = locatorFromFlags(page, flags);
+      const target = locator.first();
+      await target.click();
+      await page.keyboard.press("Control+A");
+      await page.keyboard.press("Backspace");
+      if (String(value).length > 0) {
+        await target.pressSequentially(String(value), { delay: 15 });
+      }
+      await sleep(300);
+      return { ok: true, url: page.url(), value: String(value) };
+    }
+    case "press": {
+      const key = flags.key || positionals[0];
+      if (!key) throw new Error("press requires --key");
+      await page.keyboard.press(String(key));
+      await sleep(100);
+      return { ok: true, key: String(key), url: page.url() };
+    }
+    case "wait-for-text": {
+      const text = positionals[0] || flags.text;
+      if (!text) throw new Error("wait-for-text requires text");
+      await page.getByText(String(text)).first().waitFor({ timeout: 15_000 });
+      return { ok: true, text: String(text) };
+    }
+    case "snapshot": {
+      const aria = await page.locator("body").ariaSnapshot();
+      const outPath =
+        flags.path || join(evidenceRoot, `snapshot-${Date.now()}.aria.yml`);
+      mkdirSync(dirname(outPath), { recursive: true });
+      writeFileSync(outPath, aria + "\n");
+      return { ok: true, path: outPath, bytes: Buffer.byteLength(aria) };
+    }
+    case "screenshot": {
+      const outPath =
+        flags.path || join(evidenceRoot, `screenshot-${Date.now()}.png`);
+      mkdirSync(dirname(outPath), { recursive: true });
+      await page.screenshot({
+        path: outPath,
+        fullPage: Boolean(flags["full-page"]),
+      });
+      return { ok: true, path: outPath };
+    }
+    case "eval": {
+      const expression = positionals.join(" ");
+      if (!expression) throw new Error("eval requires a JS expression");
+      const value = await page.evaluate((expr) => eval(expr), expression);
+      return { ok: true, value };
+    }
+    case "viewport": {
+      const width = Number(flags.width || positionals[0]);
+      const height = Number(flags.height || positionals[1] || 844);
+      if (!Number.isInteger(width) || width < 1) {
+        throw new Error("viewport requires --width <n>");
+      }
+      if (!Number.isInteger(height) || height < 1) {
+        throw new Error("viewport requires --height <n>");
+      }
+      await page.setViewportSize({ width, height });
+      updateInstance({ viewportWidth: width, viewportHeight: height });
+      return { ok: true, width, height, url: page.url() };
+    }
+    case "url":
+      return { ok: true, url: page.url() };
+    case "title":
+      return { ok: true, title: await page.title() };
+    default: {
+      const _exhaustive = subcommand;
+      throw new Error(`Unknown browser subcommand: ${_exhaustive}`);
+    }
+  }
+}
+
+async function cmdBrowser(argv) {
+  const [subcommand, ...rest] = argv;
+  if (!subcommand) usage();
+
+  if (subcommand === "start" || subcommand === "stop") {
+    process.stdout.write(
+      JSON.stringify({
+        ok: true,
+        noop: true,
+        note: "Browser sessions are per-command; start/stop are no-ops. Use browser steps for multi-action flows.",
+      }) + "\n",
+    );
+    return;
+  }
+
+  const { positionals, flags } = parseArgs(rest);
+
+  if (subcommand === "steps") {
+    const file = flags.file || positionals[0];
+    if (!file) throw new Error("steps requires --file <json>");
+    const steps = JSON.parse(readFileSync(file, "utf8"));
+    if (!Array.isArray(steps)) throw new Error("steps file must be a JSON array");
+
+    const result = await withPage(
+      async (page, instance) => {
+        const outputs = [];
+        for (const step of steps) {
+          const action = step.action || step.command;
+          const stepPositionals = step.positionals || step.args || [];
+          const stepFlags = step.flags || {};
+          outputs.push(
+            await runBrowserAction(
+              page,
+              instance,
+              action,
+              stepPositionals,
+              stepFlags,
+            ),
+          );
+        }
+        return { ok: true, steps: outputs.length, outputs };
+      },
+      { restore: false },
+    );
+    process.stdout.write(JSON.stringify(result, null, 2) + "\n");
+    return;
+  }
+
+  const result = await withPage(
+    async (page, instance) =>
+      runBrowserAction(page, instance, subcommand, positionals, flags),
+    { restore: subcommand !== "goto" },
+  );
+
+  process.stdout.write(JSON.stringify(result, null, 2) + "\n");
+}
+
+async function cmdHttp(argv) {
+  const instance = readInstance();
+  if (!instance) throw new Error("No verification instance. Run launch first.");
+
+  const { positionals, flags } = parseArgs(argv);
+  const method = (positionals[0] || "GET").toUpperCase();
+  const path = positionals[1] || "/";
+  const url = new URL(path, instance.url).toString();
+
+  const init = { method, headers: {} };
+  if (flags.body) {
+    init.headers["Content-Type"] = "application/json";
+    init.body = String(flags.body);
+  }
+
+  const response = await fetch(url, init);
+  const text = await response.text();
+  let json = null;
+  try {
+    json = JSON.parse(text);
+  } catch {
+  }
+
+  process.stdout.write(
+    JSON.stringify(
+      {
+        ok: response.ok,
+        status: response.status,
+        url,
+        body: json ?? text,
+      },
+      null,
+      2,
+    ) + "\n",
+  );
+  if (!response.ok) process.exit(1);
+}
+
+async function main() {
+  const [command, ...rest] = process.argv.slice(2);
+  if (!command || command === "-h" || command === "--help") usage(0);
+
+  switch (command) {
+    case "launch":
+      await cmdLaunch(rest);
+      break;
+    case "doctor":
+      await cmdDoctor();
+      break;
+    case "cleanup":
+      await cmdCleanup();
+      break;
+    case "browser":
+      await cmdBrowser(rest);
+      break;
+    case "http":
+      await cmdHttp(rest);
+      break;
+    default: {
+      const _exhaustive = command;
+      throw new Error(`Unknown command: ${_exhaustive}`);
+    }
+  }
+}
+
+main().catch((error) => {
+  process.stderr.write(
+    `${error instanceof Error ? error.stack || error.message : String(error)}\n`,
+  );
+  process.exit(1);
+});
