@@ -34,29 +34,31 @@ const next = index < sorted.length - 1 ? sorted[index + 1] : undefined;
   description={entry.definition}
   path={`/${entry.slug}`}
 >
-  <article class="grid min-w-0 gap-12">
+  <article class="prose grid min-w-0 gap-12">
     <div class="grid gap-4">
       <div>
-        <p class="text-sm text-zinc-400">
+        <p class="text-sm text-muted">
           <a class="link" href="/">Dictionary</a>
           <span aria-hidden="true"> · </span>
           {CATEGORY_LABELS[entry.category]}
         </p>
-        <h1 class="font-medium">{entry.term}</h1>
-        <p class="max-w-prose text-zinc-400">{entry.definition}</p>
+        <h1 class="font-display text-3xl font-semibold tracking-tight">
+          {entry.term}
+        </h1>
+        <p class="max-w-prose text-muted">{entry.definition}</p>
       </div>
     </div>
 
     <div class="grid max-w-prose gap-2">
-      <h2 class="font-medium">In practice</h2>
-      <p class="text-zinc-400">{entry.detail}</p>
+      <h2 class="font-display font-semibold">In practice</h2>
+      <p class="text-muted">{entry.detail}</p>
     </div>
 
     {
       related.length > 0 && (
         <section class="grid gap-2">
-          <h2 class="font-medium">Related</h2>
-          <p class="text-sm text-zinc-400">
+          <h2 class="font-display font-semibold">Related</h2>
+          <p class="text-sm text-muted">
             {related.map((item, i) => (
               <span>
                 <a class="link" href={`/${item.slug}`}>
@@ -71,14 +73,14 @@ const next = index < sorted.length - 1 ? sorted[index + 1] : undefined;
     }
 
     <nav
-      class="grid gap-4 border-t border-zinc-200 pt-6 text-sm sm:grid-cols-2"
+      class="grid gap-4 border-t border-border pt-6 text-sm sm:grid-cols-2"
       aria-label="Adjacent terms"
     >
       {
         previous ? (
           <a class="link grid gap-1" href={`/${previous.slug}`}>
-            <span class="text-zinc-400">Previous</span>
-            <span class="font-medium">{previous.term}</span>
+            <span class="text-muted">Previous</span>
+            <span class="font-medium text-foreground">{previous.term}</span>
           </a>
         ) : (
           <span />
@@ -87,8 +89,8 @@ const next = index < sorted.length - 1 ? sorted[index + 1] : undefined;
       {
         next ? (
           <a class="link grid gap-1 sm:text-right" href={`/${next.slug}`}>
-            <span class="text-zinc-400">Next</span>
-            <span class="font-medium">{next.term}</span>
+            <span class="text-muted">Next</span>
+            <span class="font-medium text-foreground">{next.term}</span>
           </a>
         ) : (
           <span />

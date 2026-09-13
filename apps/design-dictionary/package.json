@@ -8,17 +8,21 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "wrangler dev",
-    "check": "astro check",
+    "check": "node scripts/assert-theme-profile.mjs && node scripts/assert-theme-distinct.mjs && node scripts/assert-theme-profile.test.mjs && astro check",
+    "test": "node scripts/assert-theme-profile.test.mjs && node scripts/assert-theme-distinct.mjs",
     "deploy": "astro build && wrangler deploy"
   },
   "dependencies": {
     "@astrojs/cloudflare": "^14.2.1",
-    "@fontsource-variable/manrope": "^5.3.0",
+    "@design-sites/ui": "workspace:*",
+    "@fontsource-variable/ibm-plex-sans": "^5.2.8",
+    "@fontsource/ibm-plex-serif": "^5.2.8",
     "astro": "^7.2.1",
     "tailwindcss": "^4.3.2"
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.10",
+    "@design-sites/config": "workspace:*",
     "@tailwindcss/vite": "^4.3.2",
     "typescript": "5.7.2",
     "wrangler": "^4.121.0"
