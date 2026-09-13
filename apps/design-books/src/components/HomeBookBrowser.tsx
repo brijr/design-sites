@@ -131,7 +131,7 @@ export function HomeBookBrowser({
   return (
     <>
       <div className="grid gap-4">
-        <div className="grid grid-cols-[1fr_auto] items-end gap-4 border-b border-zinc-200 pb-2">
+        <div className="grid grid-cols-[1fr_auto] items-end gap-4 border-b border-border pb-2">
           <input
             type="text"
             name="search"
@@ -139,9 +139,9 @@ export function HomeBookBrowser({
             placeholder="Search"
             value={filters.search}
             onChange={handleSearch}
-            className="w-full bg-transparent focus:outline-none"
+            className="w-full bg-transparent focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
           />
-          <p className="text-zinc-400">
+          <p className="text-muted">
             {visibleBooks.length} {visibleBooks.length === 1 ? "book" : "books"}
           </p>
         </div>
@@ -157,7 +157,7 @@ export function HomeBookBrowser({
               className={cn(
                 "absolute left-0 top-full z-20 mt-2 hidden w-[min(24rem,calc(100vw-3rem))]",
                 "grid-cols-1 gap-x-8 gap-y-1 p-4 text-sm sm:grid-cols-2",
-                "rounded-xl border border-zinc-200 bg-zinc-50 shadow-sm",
+                "rounded-xl border border-border bg-background shadow-sm",
                 "group-open:grid",
               )}
             >
@@ -197,7 +197,7 @@ export function HomeBookBrowser({
               className={
                 filters.sort !== "recent"
                   ? "link"
-                  : "text-zinc-400 hover:text-current"
+                  : "text-muted hover:text-current"
               }
               aria-current={filters.sort !== "recent" ? "true" : undefined}
               onClick={(event) => handleSort(event, "")}
@@ -209,7 +209,7 @@ export function HomeBookBrowser({
               className={
                 filters.sort === "recent"
                   ? "link"
-                  : "text-zinc-400 hover:text-current"
+                  : "text-muted hover:text-current"
               }
               aria-current={filters.sort === "recent" ? "true" : undefined}
               onClick={(event) => handleSort(event, "recent")}
@@ -227,7 +227,7 @@ export function HomeBookBrowser({
           ))}
         </div>
       ) : (
-        <p className="text-zinc-400">No books found</p>
+        <p className="text-muted">No books found</p>
       )}
     </>
   );
@@ -241,8 +241,8 @@ function BookCard({ book }: { book: HomeBook }) {
         aria-label={`Read about ${book.title} by ${book.author}`}
         className={cn(
           "p-8 relative flex flex-col items-center justify-center",
-          "aspect-square rounded-xl bg-zinc-100 border border-zinc-200",
-          "hover:bg-zinc-200 transition-colors duration-300",
+          "aspect-square rounded-xl border surface",
+          "transition-colors duration-300",
         )}
       >
         {book.image ? (
@@ -260,7 +260,7 @@ function BookCard({ book }: { book: HomeBook }) {
         )}
         <div className="absolute bottom-4 text-sm left-4 w-3/4">
           <h3 className="truncate">{book.title}</h3>
-          <h4 className="text-zinc-400">{book.author}</h4>
+          <h4 className="text-muted">{book.author}</h4>
         </div>
       </a>
       {book.link && (
@@ -294,7 +294,7 @@ function BookCard({ book }: { book: HomeBook }) {
 function topicOptionClass(active: boolean) {
   return cn(
     "block py-0.5",
-    active ? "text-zinc-950" : "text-zinc-400 hover:text-zinc-950",
+    active ? "text-foreground" : "text-muted hover:text-foreground",
   );
 }
 
@@ -306,7 +306,7 @@ function ChevronDown() {
       viewBox="0 0 10 10"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
-      className="text-zinc-400"
+      className="text-muted"
       aria-hidden="true"
     >
       <path

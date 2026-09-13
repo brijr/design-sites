@@ -7,6 +7,9 @@ type SubmissionResponse = {
   message?: string;
 };
 
+const fieldClassName =
+  "rounded-md border border-border bg-background px-3 py-2 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent";
+
 export function BookSubmissionDialog() {
   const [isOpen, setIsOpen] = useState(false);
   const [submitState, setSubmitState] = useState<SubmitState>("idle");
@@ -62,7 +65,7 @@ export function BookSubmissionDialog() {
     <>
       <button
         type="button"
-        className="text-sm text-zinc-400 hover:text-current"
+        className="text-sm text-muted hover:text-current"
         onClick={() => setIsOpen(true)}
       >
         Submit a book
@@ -70,12 +73,12 @@ export function BookSubmissionDialog() {
 
       {isOpen && (
         <div
-          className="fixed inset-0 z-50 grid place-items-center bg-zinc-950/20 p-6"
+          className="fixed inset-0 z-50 grid place-items-center bg-foreground/20 p-6"
           role="presentation"
           onClick={closeDialog}
         >
           <div
-            className="grid w-full max-w-lg gap-6 rounded-xl border border-zinc-200 bg-zinc-50 p-6 shadow-sm"
+            className="grid w-full max-w-lg gap-6 rounded-xl border border-border bg-background p-6 shadow-sm"
             role="dialog"
             aria-modal="true"
             aria-labelledby="book-submission-title"
@@ -86,13 +89,13 @@ export function BookSubmissionDialog() {
                 <h2 id="book-submission-title" className="font-medium">
                   Submit a book
                 </h2>
-                <p className="text-sm text-zinc-400">
+                <p className="text-sm text-muted">
                   Send a recommendation for the reading list.
                 </p>
               </div>
               <button
                 type="button"
-                className="text-sm text-zinc-400 hover:text-current"
+                className="text-sm text-muted hover:text-current"
                 onClick={closeDialog}
                 disabled={submitState === "submitting"}
               >
@@ -108,7 +111,7 @@ export function BookSubmissionDialog() {
                   type="text"
                   required
                   maxLength={160}
-                  className="rounded-md border border-zinc-200 bg-white px-3 py-2 focus:outline-none"
+                  className={fieldClassName}
                 />
               </label>
 
@@ -118,7 +121,7 @@ export function BookSubmissionDialog() {
                   name="author"
                   type="text"
                   maxLength={160}
-                  className="rounded-md border border-zinc-200 bg-white px-3 py-2 focus:outline-none"
+                  className={fieldClassName}
                 />
               </label>
 
@@ -128,7 +131,7 @@ export function BookSubmissionDialog() {
                   name="link"
                   type="url"
                   maxLength={500}
-                  className="rounded-md border border-zinc-200 bg-white px-3 py-2 focus:outline-none"
+                  className={fieldClassName}
                 />
               </label>
 
@@ -138,7 +141,7 @@ export function BookSubmissionDialog() {
                   name="notes"
                   rows={4}
                   maxLength={1000}
-                  className="resize-none rounded-md border border-zinc-200 bg-white px-3 py-2 focus:outline-none"
+                  className={`resize-none ${fieldClassName}`}
                 />
               </label>
 
@@ -148,7 +151,7 @@ export function BookSubmissionDialog() {
                   name="contact"
                   type="text"
                   maxLength={160}
-                  className="rounded-md border border-zinc-200 bg-white px-3 py-2 focus:outline-none"
+                  className={fieldClassName}
                 />
               </label>
 
@@ -165,7 +168,7 @@ export function BookSubmissionDialog() {
                   className={
                     submitState === "error"
                       ? "text-sm text-red-600"
-                      : "text-sm text-zinc-400"
+                      : "text-sm text-muted"
                   }
                 >
                   {message}
@@ -175,7 +178,7 @@ export function BookSubmissionDialog() {
               <button
                 type="submit"
                 disabled={submitState === "submitting"}
-                className="justify-self-start text-sm link disabled:text-zinc-400 disabled:no-underline"
+                className="justify-self-start text-sm link disabled:text-muted disabled:no-underline"
               >
                 {submitState === "submitting" ? "Submitting..." : "Submit"}
               </button>

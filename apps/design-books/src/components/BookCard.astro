@@ -17,8 +17,8 @@ const cover = book.data.cover;
     aria-label={`Read about ${book.data.title} by ${book.data.author}`}
     class={cn(
       "p-8 relative flex flex-col items-center justify-center",
-      "aspect-square rounded-xl bg-zinc-100 border border-zinc-200",
-      "hover:bg-zinc-200 transition-colors duration-300",
+      "aspect-square rounded-xl border surface",
+      "transition-colors duration-300",
     )}
   >
     {
@@ -36,7 +36,7 @@ const cover = book.data.cover;
     }
     <div class="absolute bottom-4 text-sm left-4 w-3/4">
       <h3 class="truncate">{book.data.title}</h3>
-      <h4 class="text-zinc-400">{book.data.author}</h4>
+      <h4 class="text-muted">{book.data.author}</h4>
     </div>
   </a>
   {

@@ -41,7 +41,7 @@ const jsonLd = collectionIndexJsonLd({
   <section class="grid gap-12">
     <div>
       <h1 class="font-medium">Topics</h1>
-      <p class="text-zinc-400">{description}</p>
+      <p class="text-muted">{description}</p>
     </div>
 
     <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
@@ -54,10 +54,10 @@ const jsonLd = collectionIndexJsonLd({
           return (
             <a
               href={topicUrl(topic)}
-              class="p-8 relative flex aspect-square flex-col justify-end rounded-xl border border-zinc-200 bg-zinc-100 transition-colors duration-300 hover:bg-zinc-200"
+              class="p-8 relative flex aspect-square flex-col justify-end rounded-xl border surface transition-colors duration-300"
             >
               <h2 class="font-medium">{topic.data.title}</h2>
-              <p class="text-sm text-zinc-400">{getBookCountLabel(count)}</p>
+              <p class="text-sm text-muted">{getBookCountLabel(count)}</p>
             </a>
           );
         })
