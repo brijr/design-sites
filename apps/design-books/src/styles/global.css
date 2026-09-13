@@ -1,5 +1,8 @@
 @import "tailwindcss";
 @import "lenis/dist/lenis.css";
+@import "@design-sites/ui/tokens.css";
+@import "./theme-profile.css";
+@import "@design-sites/ui/prose.css";
 
 @plugin "@tailwindcss/typography";
 
@@ -32,10 +35,13 @@
   line-gap-override: 0%;
 }
 
-@theme {
-  --font-sans:
-    "Manrope Variable", "Manrope Fallback", ui-sans-serif, system-ui,
-    sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-muted: var(--muted);
+  --color-border: var(--border);
+  --color-accent: var(--accent);
+  --radius-xl: var(--radius);
 }
 
 /*
@@ -53,12 +59,38 @@
   ::before,
   ::backdrop,
   ::file-selector-button {
-    border-color: var(--color-gray-200, currentColor);
+    border-color: var(--border);
   }
 
   html {
     font-family: var(--font-sans);
   }
+
+  body {
+    background-color: var(--background);
+    color: var(--foreground);
+  }
+
+  ::selection {
+    background-color: color-mix(in oklab, var(--accent) 35%, transparent);
+  }
+}
+
+.surface {
+  background-color: color-mix(
+    in oklab,
+    var(--foreground) 6%,
+    var(--background)
+  );
+  border-color: var(--border);
+}
+
+.surface:hover {
+  background-color: color-mix(
+    in oklab,
+    var(--foreground) 12%,
+    var(--background)
+  );
 }
 
 .link {

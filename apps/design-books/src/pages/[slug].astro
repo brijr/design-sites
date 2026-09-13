@@ -64,7 +64,7 @@ const hasBody = Boolean(book.body?.trim());
   <article class="grid gap-12">
     <div>
       <h1 class="font-medium">{book.data.title}</h1>
-      <p class="text-zinc-400">
+      <p class="text-muted">
         by{" "}
         {
           authors.map((author, index) => (
@@ -83,14 +83,14 @@ const hasBody = Boolean(book.body?.trim());
       <p>{book.data.description}</p>
       {
         metadataParts.length > 0 && (
-          <p class="text-sm text-zinc-400 tabular-nums">
+          <p class="text-sm text-muted tabular-nums">
             {metadataParts.join(" · ")}
           </p>
         )
       }
       {
         topics.length > 0 && (
-          <p class="text-sm text-zinc-400">
+          <p class="text-sm text-muted">
             Topics:{" "}
             {topics.map((topic, index) => (
               <span>
@@ -117,8 +117,8 @@ const hasBody = Boolean(book.body?.trim());
         <a
           class={cn(
             "relative flex flex-col items-center justify-center p-8",
-            "aspect-video bg-zinc-100 border border-zinc-200 rounded-xl",
-            "hover:bg-zinc-200 transition-colors duration-300",
+            "aspect-video border surface rounded-xl",
+            "transition-colors duration-300",
             "group",
           )}
           href={book.data.link || bookUrl(book)}

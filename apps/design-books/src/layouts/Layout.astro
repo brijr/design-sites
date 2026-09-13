@@ -87,8 +87,8 @@ const twitterImage = image ? absoluteUrl(image.url) : absoluteUrl("/twitter-imag
 
     <slot name="head" />
   </head>
-  <body class="min-h-screen text-zinc-950 bg-zinc-50 selection:bg-orange-200">
-    <main class="p-6 sm:p-12 grid gap-12 max-w-7xl">
+  <body class="min-h-screen text-foreground bg-background">
+    <div class="p-6 sm:p-12 grid gap-12 max-w-[var(--container)]">
       <nav class="flex items-center justify-between gap-4">
         <h2 class="font-medium">
           <a href="/" class="group">
@@ -99,9 +99,11 @@ const twitterImage = image ? absoluteUrl(image.url) : absoluteUrl("/twitter-imag
         <BookSubmissionDialog client:idle />
       </nav>
 
-      <slot />
+      <main>
+        <slot />
+      </main>
 
-      <footer class="text-xs grid gap-1 text-zinc-400">
+      <footer class="text-xs grid gap-1 text-muted">
         <p>
           © design-books.com / made by
           <a href="https://bridger.to" class="link">bridger</a>
@@ -110,7 +112,7 @@ const twitterImage = image ? absoluteUrl(image.url) : absoluteUrl("/twitter-imag
           / 2025
         </p>
       </footer>
-    </main>
+    </div>
 
     <script>
       import "../lib/smooth-scroll";

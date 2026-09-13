@@ -1,0 +1,14 @@
+:root {
+  --background: #fafafa;
+  --foreground: #09090b;
+  --muted: #52525b;
+  --border: #e4e4e7;
+  --accent: #c2410c;
+  --radius: 0.75rem;
+  --font-sans:
+    "Manrope Variable", "Manrope Fallback", ui-sans-serif, system-ui, sans-serif,
+    "Apple Color Emoji", "Segoe UI Emoji";
+  --font-display: var(--font-sans);
+  --prose-measure: 65ch;
+  --container: 80rem;
+}
