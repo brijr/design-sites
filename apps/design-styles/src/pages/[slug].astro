@@ -49,15 +49,15 @@ const ledTo = linkedNames(entry.data.descendants);
     <div class="grid gap-4">
       <div>
         <h1 class="font-medium">{entry.data.title}</h1>
-        <p class="text-zinc-400">{entry.data.definition}</p>
+        <p class="text-muted">{entry.data.definition}</p>
       </div>
 
       {
         (from.length > 0 || ledTo.length > 0) && (
-          <p class="text-sm text-zinc-400">
+          <p class="text-sm text-muted">
             {from.length > 0 && (
               <>
-                <span class="text-zinc-950">From</span>{" "}
+                <span class="text-foreground">From</span>{" "}
                 {from.map((item) => (
                   <span>
                     {item.href ? (
@@ -75,7 +75,7 @@ const ledTo = linkedNames(entry.data.descendants);
             {from.length > 0 && ledTo.length > 0 && <span aria-hidden="true"> · </span>}
             {ledTo.length > 0 && (
               <>
-                <span class="text-zinc-950">Led to</span>{" "}
+                <span class="text-foreground">Led to</span>{" "}
                 {ledTo.map((item) => (
                   <span>
                     {item.href ? (
@@ -94,7 +94,7 @@ const ledTo = linkedNames(entry.data.descendants);
         )
       }
 
-      <p class="text-sm text-zinc-400">
+      <p class="text-sm text-muted">
         {entry.data.period}
         <span aria-hidden="true"> · </span>
         {entry.data.place}
@@ -104,7 +104,7 @@ const ledTo = linkedNames(entry.data.descendants);
         {entry.data.status}
       </p>
 
-      <ul class="grid max-w-prose gap-3 text-zinc-400">
+      <ul class="grid max-w-prose gap-3 text-muted">
         {entry.data.marks.map((mark) => (
           <li>{mark}</li>
         ))}
@@ -113,7 +113,7 @@ const ledTo = linkedNames(entry.data.descendants);
 
     <StyleRail entry={entry} size="entry" />
 
-    <section class="prose-styles grid max-w-prose gap-4">
+    <section class="prose">
       <Content />
     </section>
 
@@ -127,7 +127,7 @@ const ledTo = linkedNames(entry.data.descendants);
                 {entry.data.figures.map((figure) => (
                   <li>
                     <p>{figure.name}</p>
-                    <p class="text-sm text-zinc-400">{figure.note}</p>
+                    <p class="text-sm text-muted">{figure.note}</p>
                   </li>
                 ))}
               </ul>
@@ -141,9 +141,9 @@ const ledTo = linkedNames(entry.data.descendants);
                   <li>
                     <p>
                       {work.title}
-                      {work.year ? <span class="text-zinc-400"> {work.year}</span> : null}
+                      {work.year ? <span class="text-muted"> {work.year}</span> : null}
                     </p>
-                    {work.note && <p class="text-sm text-zinc-400">{work.note}</p>}
+                    {work.note && <p class="text-sm text-muted">{work.note}</p>}
                   </li>
                 ))}
               </ul>
@@ -171,7 +171,7 @@ const ledTo = linkedNames(entry.data.descendants);
                       item.name
                     )}
                   </p>
-                  <p class="text-sm text-zinc-400">{item.why}</p>
+                  <p class="text-sm text-muted">{item.why}</p>
                 </li>
               );
             })}
@@ -190,7 +190,7 @@ const ledTo = linkedNames(entry.data.descendants);
                 {entry.data.philosophies.map((item) => (
                   <li>
                     <p>{item.title}</p>
-                    {item.note && <p class="text-sm text-zinc-400">{item.note}</p>}
+                    {item.note && <p class="text-sm text-muted">{item.note}</p>}
                   </li>
                 ))}
               </ul>
@@ -199,7 +199,7 @@ const ledTo = linkedNames(entry.data.descendants);
           {entry.data.books.length > 0 && (
             <div class="grid gap-2">
               <h2 class="font-medium">Related books</h2>
-              <p class="text-sm text-zinc-400">
+              <p class="text-sm text-muted">
                 {entry.data.books.map((book, index) => (
                   <span>
                     <a class="link" href={book.href}>
@@ -217,7 +217,7 @@ const ledTo = linkedNames(entry.data.descendants);
 
     {
       (previous || next) && (
-        <nav aria-label="Adjacent styles" class="grid gap-3 text-sm text-zinc-400 sm:grid-cols-2">
+        <nav aria-label="Adjacent styles" class="grid gap-3 text-sm text-muted sm:grid-cols-2">
           {previous && (
             <a class="link" href={`/${previous.id}`}>
               <span class="tabular-nums">{previous.data.yearStart}</span> {previous.data.title}
@@ -233,14 +233,3 @@ const ledTo = linkedNames(entry.data.descendants);
     }
   </article>
 </Layout>
-
-<style>
-  .prose-styles :global(h2) {
-    font-weight: 500;
-  }
-
-  .prose-styles :global(p) {
-    max-width: 65ch;
-    color: var(--color-zinc-400);
-  }
-</style>

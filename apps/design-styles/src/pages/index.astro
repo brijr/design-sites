@@ -14,12 +14,12 @@ const eras = groupByEra(entries);
   <section class="catalog grid min-w-0 gap-12">
     <div>
       <h1 class="font-medium">A visual field guide to design.</h1>
-      <p class="text-zinc-400">
+      <p class="text-muted">
         Movements and visual languages, arranged in time.
       </p>
     </div>
 
-    <fieldset class="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-zinc-400">
+    <fieldset class="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-muted">
       <legend class="sr-only">Filter by medium</legend>
       <label class="cursor-pointer">
         <input class="sr-only" type="radio" name="medium" value="all" checked />
@@ -44,7 +44,7 @@ const eras = groupByEra(entries);
               {group.entries.map((entry) => (
                 <li data-medium={entry.data.medium.join(" ")}>
                   <a class="link" href={`#${entry.id}`}>
-                    <span class="tabular-nums text-zinc-400">{entry.data.yearStart}</span>
+                    <span class="tabular-nums text-muted">{entry.data.yearStart}</span>
                     {" "}
                     {entry.data.title}
                   </a>
@@ -64,14 +64,14 @@ const eras = groupByEra(entries);
           data-medium={entry.data.medium.join(" ")}
         >
           <div>
-            <p class="tabular-nums text-zinc-400">{entry.data.yearStart}</p>
+            <p class="tabular-nums text-muted">{entry.data.yearStart}</p>
             <h2 class="font-medium">
               <a class="link" href={`/${entry.id}`}>
                 {entry.data.title}
               </a>
             </h2>
-            <p class="max-w-prose text-zinc-400">{entry.data.definition}</p>
-            <p class="text-sm text-zinc-400">
+            <p class="max-w-prose text-muted">{entry.data.definition}</p>
+            <p class="text-sm text-muted">
               {entry.data.type}
               <span aria-hidden="true"> · </span>
               {entry.data.status}
@@ -88,7 +88,7 @@ const eras = groupByEra(entries);
 
 <style>
   .catalog label:has(:checked) {
-    color: var(--color-zinc-950);
+    color: var(--foreground);
   }
 
   .catalog label:has(:focus-visible) {

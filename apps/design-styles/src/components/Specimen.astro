@@ -38,7 +38,7 @@ const Custom = Object.hasOwn(custom, id) ? custom[id as keyof typeof custom] : u
     ) : hasSpecimen(id) ? (
       <PlateById id={id} compact={compact} />
     ) : (
-      <div class="grid h-full place-items-center text-sm text-zinc-400">
+      <div class="grid h-full place-items-center text-sm text-muted">
         Specimen forthcoming
       </div>
     )

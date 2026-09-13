@@ -1,23 +1,36 @@
 @import "tailwindcss";
+@import "@design-sites/ui/tokens.css";
+@import "./theme-profile.css";
+@import "@design-sites/ui/prose.css";
 
 /*
-  Metric-matched fallback for Manrope, copied from apps/design-books — see its
-  global.css for the derivation from @capsizecss/metrics. If the typeface ever
-  changes, recompute rather than nudging these by hand.
+  Metric-matched fallback for Space Grotesk Variable.
+
+  Fontsource ships with font-display: swap. These overrides scale Arial so the
+  swap does not reflow. Derived from @capsizecss/metrics approximations:
+    Space Grotesk  unitsPerEm 1000, ascent 990, descent -250, xHeight 520
+    Arial          unitsPerEm 2048, xHeight 1062
+
+    size-adjust        = (520/1000) / (1062/2048) = 100.28%
+    ascent-override    = (990/1000) / 1.0028      =  98.72%
+    descent-override   = (250/1000) / 1.0028      =  24.93%
 */
 @font-face {
-  font-family: "Manrope Fallback";
+  font-family: "Space Grotesk Fallback";
   src: local("Arial");
-  size-adjust: 104.14%;
-  ascent-override: 102.37%;
-  descent-override: 28.81%;
+  size-adjust: 100.28%;
+  ascent-override: 98.72%;
+  descent-override: 24.93%;
   line-gap-override: 0%;
 }
 
-@theme {
-  --font-sans:
-    "Manrope Variable", "Manrope Fallback", ui-sans-serif, system-ui,
-    sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-muted: var(--muted);
+  --color-border: var(--border);
+  --color-accent: var(--accent);
+  --radius-xl: var(--radius);
 }
 
 @layer base {
@@ -26,7 +39,7 @@
   ::before,
   ::backdrop,
   ::file-selector-button {
-    border-color: var(--color-gray-200, currentColor);
+    border-color: var(--border);
   }
 
   html {
@@ -36,19 +49,34 @@
 
   body {
     overflow-x: clip;
+    background-color: var(--background);
+    color: var(--foreground);
+  }
+
+  ::selection {
+    background-color: color-mix(in oklab, var(--accent) 35%, transparent);
   }
 
   h1,
   h2,
   h3 {
+    font-family: var(--font-display);
     text-wrap: balance;
   }
 
   p {
     text-wrap: pretty;
   }
+
+  a:focus-visible,
+  input:focus-visible,
+  button:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
 }
 
 .link {
   @apply underline-offset-2 hover:underline;
+  color: var(--accent);
 }
