@@ -18,8 +18,10 @@ const letters = lettersInUse(sorted);
 <Layout title={SITE_NAME} description={SITE_DESCRIPTION} path="/">
   <section class="catalog grid min-w-0 gap-12" data-dictionary>
     <div>
-      <h1 class="font-medium">One hundred words every designer should know.</h1>
-      <p class="text-zinc-400">
+      <h1 class="font-display text-2xl font-semibold tracking-tight sm:text-3xl">
+        One hundred words every designer should know.
+      </h1>
+      <p class="mt-2 text-muted">
         Interface, typography, and foundational principles — in plain language.
       </p>
     </div>
@@ -28,7 +30,7 @@ const letters = lettersInUse(sorted);
       <label class="grid gap-2">
         <span class="sr-only">Search terms</span>
         <input
-          class="w-full max-w-md border-b border-zinc-200 bg-transparent py-2 text-base outline-none placeholder:text-zinc-400 focus:border-zinc-950"
+          class="w-full max-w-md border-b border-border bg-transparent py-2 text-base placeholder:text-muted focus:border-foreground"
           type="search"
           name="q"
           placeholder="Search — hierarchy, kerning, affordance…"
@@ -37,7 +39,7 @@ const letters = lettersInUse(sorted);
         />
       </label>
 
-      <fieldset class="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-zinc-400">
+      <fieldset class="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-muted">
         <legend class="sr-only">Filter by category</legend>
         <label class="cursor-pointer">
           <input
@@ -68,7 +70,7 @@ const letters = lettersInUse(sorted);
 
       <nav
         aria-label="Jump to letter"
-        class="flex flex-wrap gap-x-3 gap-y-1 text-sm text-zinc-400"
+        class="flex flex-wrap gap-x-3 gap-y-1 text-sm text-muted"
       >
         {
           letters.map((letter) => (
@@ -79,7 +81,7 @@ const letters = lettersInUse(sorted);
         }
       </nav>
 
-      <p class="text-sm text-zinc-400" data-count aria-live="polite">
+      <p class="text-sm text-muted" data-count aria-live="polite">
         {sorted.length} terms
       </p>
     </div>
@@ -92,10 +94,10 @@ const letters = lettersInUse(sorted);
             data-letter={letter}
             id={`letter-${letter}`}
           >
-            <h2 class="sticky top-0 z-10 bg-zinc-50/90 py-2 font-medium backdrop-blur-sm pointer-events-none">
+            <h2 class="sticky top-0 z-10 bg-background/90 py-2 font-display font-semibold backdrop-blur-sm pointer-events-none">
               {letter}
             </h2>
-            <ul class="grid gap-0 divide-y divide-zinc-200 border-y border-zinc-200">
+            <ul class="grid gap-0 divide-y divide-border border-y border-border">
               {entries.map((entry) => (
                 <li
                   class="term-row"
@@ -108,12 +110,12 @@ const letters = lettersInUse(sorted);
                     class="group grid gap-1 py-4 sm:grid-cols-[minmax(9rem,14rem)_1fr] sm:gap-6"
                     href={`/${entry.slug}`}
                   >
-                    <span class="font-medium group-hover:underline group-hover:underline-offset-2">
+                    <span class="font-medium text-foreground group-hover:underline group-hover:underline-offset-2">
                       {entry.term}
                     </span>
                     <span class="grid gap-1">
-                      <span class="text-zinc-400">{entry.definition}</span>
-                      <span class="text-sm text-zinc-400">
+                      <span class="text-muted">{entry.definition}</span>
+                      <span class="text-sm text-muted">
                         {CATEGORY_LABELS[entry.category]}
                       </span>
                     </span>
@@ -126,13 +128,13 @@ const letters = lettersInUse(sorted);
       }
     </div>
 
-    <p class="hidden text-zinc-400" data-empty>No terms match that search.</p>
+    <p class="hidden text-muted" data-empty>No terms match that search.</p>
   </section>
 </Layout>
 
 <style>
   .catalog label:has(:checked) {
-    color: var(--color-zinc-950);
+    color: var(--foreground);
   }
 
   .catalog label:has(:focus-visible) {

@@ -1,0 +1,15 @@
+:root {
+  --background: #f4f0e6;
+  --foreground: #1c1917;
+  --muted: #57534e;
+  --border: #d6d3d1;
+  --accent: #0f766e;
+  --radius: 0;
+  --font-sans:
+    "IBM Plex Sans Variable", "IBM Plex Sans Fallback", ui-sans-serif, system-ui,
+    sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+  --font-display:
+    "IBM Plex Serif", "IBM Plex Serif Fallback", ui-serif, Georgia, serif;
+  --prose-measure: 65ch;
+  --container: 56rem;
+}
