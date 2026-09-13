@@ -10,7 +10,8 @@
     "build": "astro build",
     "preview": "wrangler dev",
     "deploy": "astro build && wrangler deploy",
-    "check": "node scripts/assert-theme-profile.mjs && astro check",
+    "check": "node scripts/assert-theme-profile.mjs && node scripts/assert-theme-profile.test.mjs && astro check",
+    "test": "node scripts/assert-theme-profile.test.mjs",
     "types": "wrangler types",
     "astro": "astro",
     "add-book": "node scripts/add-book.mjs"
