@@ -1,0 +1,15 @@
+:root {
+  color-scheme: dark;
+  --background: #0a0a0a;
+  --foreground: #f5f5f5;
+  --muted: #a3a3a3;
+  --border: #262626;
+  --accent: #f59e0b;
+  --radius: 0.125rem;
+  --font-sans:
+    "Space Grotesk Variable", "Space Grotesk Fallback", ui-sans-serif, system-ui,
+    sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+  --font-display: var(--font-sans);
+  --prose-measure: 65ch;
+  --container: 90rem;
+}

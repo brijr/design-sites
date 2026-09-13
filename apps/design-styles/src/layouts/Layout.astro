@@ -1,8 +1,8 @@
 ---
-import "@fontsource-variable/manrope";
+import "@fontsource-variable/space-grotesk";
 import "../styles/global.css";
 
-import manropeLatin from "@fontsource-variable/manrope/files/manrope-latin-wght-normal.woff2?url";
+import spaceGroteskLatin from "@fontsource-variable/space-grotesk/files/space-grotesk-latin-wght-normal.woff2?url";
 
 import { SITE_DESCRIPTION, SITE_NAME } from "../lib/site";
 
@@ -25,7 +25,7 @@ const canonical = new URL(path, Astro.site).href;
     <link rel="canonical" href={canonical} />
     <link
       rel="preload"
-      href={manropeLatin}
+      href={spaceGroteskLatin}
       as="font"
       type="font/woff2"
       crossorigin
@@ -40,19 +40,21 @@ const canonical = new URL(path, Astro.site).href;
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical} />
   </head>
-  <body class="min-h-screen bg-zinc-50 text-zinc-950 selection:bg-orange-200">
-    <main class="grid min-w-0 max-w-7xl gap-12 p-6 sm:p-12">
+  <body class="min-h-screen bg-background text-foreground">
+    <div class="grid min-w-0 max-w-[var(--container)] gap-12 p-6 sm:p-12">
       <nav>
-        <h2 class="font-medium">
-          <a href="/" class="group">
+        <h2 class="text-lg font-semibold tracking-tight">
+          <a href="/" class="group text-foreground">
             {SITE_NAME}
           </a>
         </h2>
       </nav>
 
-      <slot />
+      <main>
+        <slot />
+      </main>
 
-      <footer class="grid gap-1 text-xs text-zinc-400">
+      <footer class="grid gap-1 text-xs text-muted">
         <p>
           © design-styles.com / made by
           <a href="https://bridger.to" class="link">bridger</a>
@@ -60,6 +62,6 @@ const canonical = new URL(path, Astro.site).href;
           <a href="https://wipdes.com" class="link">wip</a>
         </p>
       </footer>
-    </main>
+    </div>
   </body>
 </html>

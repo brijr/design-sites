@@ -7,7 +7,7 @@ interface Props {
 
 const { href, label, size = "index" } = Astro.props;
 const classes = [
-  "block overflow-hidden rounded-xl border border-zinc-200 bg-zinc-100",
+  "block overflow-hidden rounded-[var(--radius)] border border-border specimen-plate",
   "aspect-[5/3]",
   size === "entry" ? "w-80 sm:w-[28rem]" : "w-64 sm:w-80",
 ];
@@ -24,3 +24,10 @@ const classes = [
     </div>
   )
 }
+
+<style>
+  .specimen-plate {
+    --specimen-plate-fill: #f4f4f0;
+    background-color: var(--specimen-plate-fill);
+  }
+</style>
