@@ -21,4 +21,12 @@ const bad = run("bad.theme-profile.css");
 assert.equal(bad.status, 1);
 assert.match(bad.stderr, /FAIL unknown tokens/);
 
+const commentedRequired = run("commented-required.theme-profile.css");
+assert.equal(commentedRequired.status, 1);
+assert.match(commentedRequired.stderr, /FAIL missing required tokens: --container/);
+
+const commentedUnknown = run("commented-unknown.theme-profile.css");
+assert.equal(commentedUnknown.status, 0);
+assert.match(commentedUnknown.stdout, /^PASS /);
+
 console.log("PASS check-theme-profile.test.mjs");

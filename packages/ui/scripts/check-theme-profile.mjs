@@ -21,7 +21,11 @@ if (!profilePath) {
   process.exit(2);
 }
 
-const css = fs.readFileSync(profilePath, "utf8");
+function stripCssComments(source) {
+  return source.replace(/\/\*[\s\S]*?\*\//g, "");
+}
+
+const css = stripCssComments(fs.readFileSync(profilePath, "utf8"));
 const decls = [...css.matchAll(/--([a-z0-9-]+)\s*:/gi)].map((m) => `--${m[1]}`);
 const unknown = [...new Set(decls)].filter((name) => !ALLOWLIST.has(name));
 const missing = [...ALLOWLIST].filter((name) => !decls.includes(name));
